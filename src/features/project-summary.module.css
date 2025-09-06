@@ -208,7 +208,7 @@
   transition-duration: var(--durationM);
   transition-delay: 1.3s;
 
-  @media (--mediaUseMotion) {
+  @media (prefers-reduced-motion: no-preference) {
     transition-property: transform, opacity;
     transform: translateX(calc(var(--spaceM) * -1));
   }
@@ -227,7 +227,7 @@
   transition-delay: var(--durationM);
   opacity: 0;
 
-  @media (--mediaUseMotion) {
+  @media (prefers-reduced-motion: no-preference) {
     transition-property: transform, opacity;
     transform: translate3d(0, var(--spaceL), 0);
   }
@@ -246,7 +246,7 @@
   transition-delay: var(--durationL);
   opacity: 0;
 
-  @media (--mediaUseMotion) {
+  @media (prefers-reduced-motion: no-preference) {
     transition-property: transform, opacity;
     transform: translate3d(0, var(--spaceL), 0);
   }
@@ -265,7 +265,7 @@
   transform: translate3d(0, var(--spaceL), 0);
   opacity: 0;
 
-  @media (--mediaUseMotion) {
+  @media (prefers-reduced-motion: no-preference) {
     transition-property: transform, opacity;
     transform: translate3d(0, var(--spaceL), 0);
   }

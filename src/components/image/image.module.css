@@ -31,7 +31,7 @@
         z-index: var(--zIndex2);
       }
 
-      @media (--mediaUseMotion) {
+      @media (prefers-reduced-motion: no-preference) {
         &[data-visible='true']::before:global {
           animation: reveal var(--revealDuration) var(--bezierFastoutSlowin) var(--delay);
         }
@@ -58,7 +58,7 @@
       opacity: 0;
       transition: opacity var(--durationM) ease var(--delay);
 
-      @media (--mediaReduceMotion) {
+      @media (prefers-reduced-motion: reduce) {
         transition-delay: calc(var(--delay) - 1s);
       }
     }

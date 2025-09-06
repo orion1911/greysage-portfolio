@@ -86,47 +86,40 @@
   }
 }
 
+@keyframes reveal {
+  0% {
+    transform: scale3d(0, 1, 1);
+    transform-origin: left;
+  }
+  50% {
+    transform: scale3d(1, 1, 1);
+    transform-origin: left;
+  }
+  51% {
+    transform: scale3d(1, 1, 1);
+    transform-origin: right;
+  }
+  100% {
+    transform: scale3d(0, 1, 1);
+    transform-origin: right;
+  }
+}
 
-
-@layer base {
-  @keyframes reveal {
-    0% {
-      transform: scale3d(0, 1, 1);
-      transform-origin: left;
-    }
-    50% {
-      transform: scale3d(1, 1, 1);
-      transform-origin: left;
-    }
-    51% {
-      transform: scale3d(1, 1, 1);
-      transform-origin: right;
-    }
-    100% {
-      transform: scale3d(0, 1, 1);
-      transform-origin: right;
-    }
+@keyframes introTextReveal {
+  0% {
+    color: color-mix(in lab, var(--text) 0%, transparent);
   }
 
-  @keyframes textReveal {
-    0%, 50% {
-      opacity: 0; /* Hidden until full width */
-    }
-    51% {
-      opacity: 0; /* Still hidden at start of collapse */
-    }
-    55% {
-      opacity: 0.5; /* Start fading in */
-    }
-    60% {
-      opacity: 1; /* Start fading in */
-    }
-    75% {
-      opacity: 1; /* Fade in during collapse */
-    }
-    100% {
-      opacity: 1; /* Fully visible */
-    }
+  50% {
+    color: color-mix(in lab, var(--text) 0%, transparent);
+  }
+
+  60% {
+    color: var(--textTitle);
+  }
+
+  100% {
+    color: var(--textTitle);
   }
 }
 
@@ -136,14 +129,65 @@
   flex-shrink: 0;
   align-items: center;
   line-height: 1;
+  animation-duration: 1.5s;
+  animation-delay: var(--delay);
+  animation-fill-mode: forwards;
+  animation-timing-function: var(--bezierFastoutSlowin);
+  color: color-mix(in lab, var(--text) 0%, transparent);
+  transition: opacity 0.5s ease var(--durationM);
   isolation: isolate;
+
+  &::after {
+    content: '';
+    background: var(--accent);
+    animation-duration: 1.5s;
+    animation-delay: var(--delay);
+    animation-fill-mode: forwards;
+    animation-timing-function: var(--bezierFastoutSlowin);
+    transform-origin: left;
+    transform: scale3d(0, 1, 1);
+    position: absolute;
+    inset: 0 -0.02em 0 0;
+    z-index: var(--zIndex1);
+    will-change: transform;
+  }
+
+  &[data-plus='true']::before {
+    content: '+';
+    margin-right: 10px;
+    opacity: 0.4;
+  }
+
+  &[data-status='entering'] {
+    animation-name: introTextReveal;
+
+    @media (prefers-reduced-motion: no-preference) {
+      &::after {
+        animation-name: reveal;
+      }
+    }
+  }
+
+  &[data-status='entered'] {
+    color: var(--textTitle);
+
+    &::after {
+      opacity: 1;
+      transform: scale3d(0, 0, 1);
+      transform-origin: right;
+    }
+  }
+
+  &[data-status='exiting'] {
+    color: var(--textTitle);
+    opacity: 0;
+    position: absolute;
+    top: 0;
+    z-index: var(--zIndex0);
+  }
 }
 
 .word.discipline {
-  color: var(--text, #333); /* Fallback for text color */
-  transition: opacity 1.5s ease; /* For exit fade-out */
-  /* font-size: 42px !important; */
-
 
   @media (max-width: 696px) {
     font-size: var(--fontSizeH01);
@@ -157,72 +201,6 @@
     font-size: var(--fontSizeH1);
   }
 }
-
-.word::after {
-  content: '';
-  background: var(--accent, #00f); /* Fallback color */
-  animation-duration: 1.5s;
-  animation-delay: var(--delay, 0s); /* Sync with text delay */
-  animation-fill-mode: forwards;
-  animation-timing-function: var(--bezierFastoutSlowin, ease); /* Fallback easing */
-  transform-origin: left;
-  transform: scale3d(0, 1, 1); /* Start with zero width */
-  position: absolute;
-  inset: 0 -0.02em 0 0;
-  z-index: var(--zIndex1, 1); /* Fallback z-index */
-  will-change: transform;
-}
-
-.word[data-status='entering']::after {
-  animation-name: reveal;
-}
-
-.word[data-status='entered']::after {
-  transform: scale3d(0, 0, 1); /* Collapse vertically after reveal, but text is already visible */
-  transform-origin: right;
-}
-
-.word[data-status='exiting']::after {
-  opacity: 0; /* Fade out background */
-}
-
-.word.discipline[data-status='exiting'] {
-  opacity: 0; /* Fade out discipline text */
-}
-
-.word.discipline[data-status='entering'] {
-  opacity: 0; /* Start hidden */
-  animation: textReveal 1.5s ease forwards; /* Fade in during collapse */
-}
-
-@media (prefers-reduced-motion: no-preference) {
-  .word[data-status='entering']::after {
-    animation-name: reveal;
-  }
-}
-
-@media (prefers-reduced-motion: reduce) {
-  .word::after {
-    animation: none;
-    transform: scale3d(0, 0, 1); /* Static collapsed state */
-    background: var(--accent, #00f);
-  }
-  .word.discipline[data-status='exiting'] {
-    opacity: 0; /* Static fade-out for reduced motion */
-  }
-  .word.discipline[data-status='entering'] {
-    opacity: 1; /* Immediate visibility for reduced motion */
-    animation: none;
-  }
-}
-
-.word[data-plus='true']::before {
-  content: '+';
-  margin-right: 10px;
-  opacity: 0.4;
-}
-
-
 
 
 @keyframes introLine {

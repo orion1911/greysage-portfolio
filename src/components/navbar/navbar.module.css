@@ -102,7 +102,7 @@
       transform-origin: bottom;
     }
 
-    @media (--mediaUseMotion) {
+    @media (prefers-reduced-motion: no-preference) {
       &::after {
         transition: transform var(--durationM) var(--bezierFastoutSlowin);
       }
@@ -184,7 +184,7 @@
       display: flex;
     }
 
-    @media (--mediaUseMotion) {
+    @media (prefers-reduced-motion: no-preference) {
       transition-property: transform, background;
     }
 
@@ -208,7 +208,7 @@
     position: relative;
     top: calc(var(--spaceM) * -1);
 
-    @media (--mediaUseMotion) {
+    @media (prefers-reduced-motion: no-preference) {
       transition-property: transform, opacity;
       transform: translate3d(0, calc(var(--spaceXL) * -1), 0);
     }
@@ -234,7 +234,7 @@
       transform-origin: right;
     }
 
-    @media (--mediaUseMotion) {
+    @media (prefers-reduced-motion: no-preference) {
       &::after {
         transition: transform var(--durationM) var(--bezierFastoutSlowin);
       }

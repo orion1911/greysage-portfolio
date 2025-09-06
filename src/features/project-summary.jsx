@@ -69,8 +69,6 @@ export function ProjectSummary({
       <div className={styles.details}>
         <div aria-hidden className={styles.index}>
           <Divider
-            lineWidth="100%"
-            lineHeight="2px"
             notchWidth="64px"
             notchHeight="8px"
             collapsed={!visible}
@@ -82,7 +80,7 @@ export function ProjectSummary({
           </span>
         </div>
         <Heading
-          level={4}
+          level={3}
           as="h2"
           className={styles.title}
           data-visible={visible}
@@ -107,7 +105,7 @@ export function ProjectSummary({
           <div className={styles.title} data-visible={visible}>
             {isHydrated && visible && (
               <img src="/assets/images/baggy-mud.jpeg" alt="" height="500" />
-            )}
+        )}
           </div>
     );
   }

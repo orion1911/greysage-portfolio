@@ -100,7 +100,7 @@
   transition-duration: var(--durationM);
   transition-delay: 1.3s;
 
-  @media (--mediaUseMotion) {
+  @media (prefers-reduced-motion: no-preference) {
     transition-property: opacity, transform;
     transform: translate3d(calc(var(--spaceM) * -1), 0, 0);
   }

@@ -29,25 +29,17 @@ export function Intro({ id, sectionRef, scrollIndicatorHidden, ...rest }) {
   const introLabel = [disciplines.slice(0, -1).join(', '), disciplines.slice(-1)[0]].join(
     ', and '
   );
-  const currentDiscipline = disciplines[disciplineIndex];
+  const currentDiscipline = disciplines.find((item, index) => index === disciplineIndex);
   const titleId = `${id}-title`;
   const scrollToHash = useScrollToHash();
   const isHydrated = useHydrated();
 
-  // Initialize hiddenRefs as a single ref array
-  const hiddenRefs = useRef(disciplines.map(() => ({ current: null }))).current;
-
-  // Calculate timing
-  const enterTime = 3000; // Adjusted to match the full cycle including collapse
-  const exitTime = 1500;
-  const totalAnimationTime = enterTime + exitTime; // 4500ms
-
   useInterval(
     () => {
-      const nextIndex = (disciplineIndex + 1) % disciplines.length;
-      setDisciplineIndex(nextIndex);
+      const index = (disciplineIndex + 1) % disciplines.length;
+      setDisciplineIndex(index);
     },
-    totalAnimationTime,
+    5000,
     theme
   );
 
@@ -56,18 +48,6 @@ export function Intro({ id, sectionRef, scrollIndicatorHidden, ...rest }) {
       setDisciplineIndex(0);
     }
   }, [theme, prevTheme]);
-
-  useEffect(() => {
-    let maxWidth = 0;
-    hiddenRefs.forEach(ref => {
-      if (ref.current) {
-        maxWidth = Math.max(maxWidth, ref.current.clientWidth);
-      }
-    });
-    setMaxDisciplineWidth(maxWidth);
-  }, [hiddenRefs]);
-
-  const [maxDisciplineWidth, setMaxDisciplineWidth] = useState(0);
 
   const handleScrollClick = event => {
     event.preventDefault();
@@ -84,26 +64,11 @@ export function Intro({ id, sectionRef, scrollIndicatorHidden, ...rest }) {
       tabIndex={-1}
       {...rest}
     >
-      {/* Hidden spans for measuring widths */}
-      <div style={{ position: 'absolute', visibility: 'hidden', left: '-9999px' }}>
-        {disciplines.map((item, index) => (
-          <span
-            key={item}
-            ref={el => (hiddenRefs[index].current = el)}
-            className={styles.word}
-            data-plus={true}
-          >
-            {item}
-          </span>
-        ))}
-      </div>
-
-      <Transition in key={theme} timeout={totalAnimationTime}>
+      <Transition in key={theme} timeout={3000}>
         {({ visible, status }) => (
           <>
             {isHydrated && (
               <Suspense>
-                {/* <DisplacementSphere /> */}
                 <Sphere3D />
               </Suspense>
             )}
@@ -114,6 +79,7 @@ export function Intro({ id, sectionRef, scrollIndicatorHidden, ...rest }) {
               <Heading level={0} as="h2" className={styles.title}>
                 <VisuallyHidden className={styles.label}>
                   {`${config.role} + ${introLabel}`}
+                  {/* {config.role} + <Fragment style={{ fontSize: '7.2rem !important'}}>{introLabel}</Fragment> */}
                 </VisuallyHidden>
                 <span aria-hidden className={styles.row}>
                   <span
@@ -125,31 +91,28 @@ export function Intro({ id, sectionRef, scrollIndicatorHidden, ...rest }) {
                   </span>
                   <span className={styles.line} data-status={status} />
                 </span>
-                <div className={styles.row} style={{ minWidth: maxDisciplineWidth ? `${maxDisciplineWidth}px` : 'auto' }}>
-                  <AnimatePresence mode="wait">
-                    {currentDiscipline && (
-                      <Transition
-                        unmount
-                        in={true}
-                        timeout={{ enter: enterTime, exit: exitTime }}
-                        key={currentDiscipline}
-                      >
-                        {({ status, nodeRef }) => (
-                          <span
-                            aria-hidden
-                            ref={nodeRef}
+                <div className={styles.row}>
+                  {disciplines.map(item => (
+                    <Transition
+                      unmount
+                      in={item === currentDiscipline}
+                      timeout={{ enter: 3000, exit: 2000 }}
+                      key={item}
+                    >
+                      {({ status, nodeRef }) => (
+                        <span
+                          aria-hidden
+                          ref={nodeRef}
                             className={`${styles.word} ${styles.discipline}`}
-                            data-plus={true}
-                            data-status={status}
-                            data-level={5}
-                            style={cssProps({ delay: tokens.base.durationL })}
-                          >
-                            {currentDiscipline}
-                          </span>
-                        )}
-                      </Transition>
-                    )}
-                  </AnimatePresence>
+                          data-plus={true}
+                          data-status={status}
+                          style={cssProps({ delay: tokens.base.durationL })}
+                        >
+                          {item}
+                        </span>
+                      )}
+                    </Transition>
+                  ))}
                 </div>
               </Heading>
             </header>
