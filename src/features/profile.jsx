@@ -33,7 +33,7 @@ export const Profile = ({ id, visible, sectionRef }) => {
       ref={sectionRef}
       aria-labelledby={titleId}
       tabIndex={-1}
-      style={{ marginTop: 0, paddingTop: 0, marginBottom: 0, paddingBottom: 0, minHeight: '58vh' }}
+      // style={{ marginTop: 0, paddingTop: 0, marginBottom: 0, paddingBottom: 0, minHeight: '58vh' }}
     >
       <Transition in={visible || focused} timeout={0}>
         {({ visible, nodeRef }) => (

@@ -7,7 +7,7 @@ export const Footer = ({ className }) => (
   <footer className={classes(styles.footer, className)} style={{ marginTop: 0, paddingTop: 0 }}>
     <Text size="s" align="center">
       <span className={styles.date}>
-        {`© ${new Date().getFullYear()} ${config.role}.`}
+        {`© ${new Date().getFullYear()} ${config.role}`}
       </span>
     </Text>
   </footer>

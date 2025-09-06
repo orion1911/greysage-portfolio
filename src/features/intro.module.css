@@ -143,6 +143,19 @@
   color: var(--text, #333); /* Fallback for text color */
   transition: opacity 1.5s ease; /* For exit fade-out */
   /* font-size: 42px !important; */
+
+
+  @media (max-width: 696px) {
+    font-size: var(--fontSizeH01);
+  }
+
+  @media (max-width: 412px) {
+    font-size: var(--fontSizeH1);
+  }
+
+  @media (max-width: 400px) {
+    font-size: var(--fontSizeH1);
+  }
 }
 
 .word::after {

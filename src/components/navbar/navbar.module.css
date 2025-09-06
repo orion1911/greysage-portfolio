@@ -29,6 +29,9 @@
 
     @media (max-width: 696px) {
       --headerNavFontSize: calc((22 / 16) * 1rem);
+      left: auto;
+      top: var(--spaceOuter);
+      right: var(--spaceOuter);
     }
 
     @media (max-width: 696px),
@@ -214,7 +217,7 @@
       top: auto;
     }
 
-    @media (max-width: 696pxS),
+    @media (max-width: 696px),
     (max-height: 360px) {
       --headerNavFontSize: calc((18 / 16) * 1rem);
     }

@@ -1,5 +1,5 @@
 .summary {
-  height: 100vh;
+  height: auto;
   width: 100%;
   max-height: 1080px;
   padding-bottom: var(--spaceL);
@@ -15,19 +15,19 @@
 
   @media (max-width: 1040px) {
     height: auto;
-    margin: var(--space3XL) 0;
+    margin: var(--spaceXL) 0;
   }
 
   @media (max-width: 696px) {
-    padding-bottom: var(--space4XL);
+    padding-bottom: var(--spaceL);
     margin-bottom: 0;
   }
 
   &[data-first='true'] {
-    margin-top: 0;
+    padding-top: var(--spaceXL);;
 
     @media (max-width: 1040px) {
-      margin-top: 0;
+      padding-top: var(--spaceXL);;
     }
   }
 }

@@ -123,6 +123,7 @@ const Home = () => {
         sectionRef={sectionTwo}
         visible={visibleSections.includes(sectionTwo.current)}
         index={2}
+        // style={{ height: '72vh' }}
         section="Our Products"
         title="At GREYSAGE, we excel in crafting premium men's bottoms that define streetwear, urban vibes, and future high street trends."
         description={<p>Our core offerings include:
@@ -155,6 +156,7 @@ const Home = () => {
         sectionRef={sectionThree}
         visible={visibleSections.includes(sectionThree.current)}
         index={3}
+        // style={{ height: '72vh' }}
         section="Services We Offer"
         title="GREYSAGE provides end-to-end solutions tailored for brands targeting young audiences, ensuring seamless production and distribution"
         description={<p>

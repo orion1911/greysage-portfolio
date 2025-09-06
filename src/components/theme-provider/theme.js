@@ -21,6 +21,7 @@ const baseTokens = {
   fontWeightMedium: 500,
   fontWeightBold: 700,
   fontSizeH0: pxToRem(140),
+  fontSizeH01: pxToRem(120),
   fontSizeH1: pxToRem(100),
   fontSizeH2: pxToRem(58),
   fontSizeH3: pxToRem(38),
@@ -68,6 +69,7 @@ const tokensLaptop = {
   maxWidthXL: '1100px',
   spaceOuter: '48px',
   fontSizeH0: pxToRem(100),
+  fontSizeH01: pxToRem(85),
   fontSizeH1: pxToRem(70),
   fontSizeH2: pxToRem(50),
   fontSizeH3: pxToRem(36),
@@ -77,6 +79,7 @@ const tokensLaptop = {
 
 const tokensTablet = {
   fontSizeH0: pxToRem(80),
+  fontSizeH01: pxToRem(70),
   fontSizeH1: pxToRem(60),
   fontSizeH2: pxToRem(48),
   fontSizeH3: pxToRem(32),
@@ -87,6 +90,7 @@ const tokensTablet = {
 const tokensMobile = {
   spaceOuter: '24px',
   fontSizeH0: pxToRem(56),
+  fontSizeH01: pxToRem(48),
   fontSizeH1: pxToRem(40),
   fontSizeH2: pxToRem(34),
   fontSizeH3: pxToRem(28),

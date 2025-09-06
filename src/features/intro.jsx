@@ -141,7 +141,7 @@ export function Intro({ id, sectionRef, scrollIndicatorHidden, ...rest }) {
                             className={`${styles.word} ${styles.discipline}`}
                             data-plus={true}
                             data-status={status}
-                            data-level='4'
+                            data-level={5}
                             style={cssProps({ delay: tokens.base.durationL })}
                           >
                             {currentDiscipline}
