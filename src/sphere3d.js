@@ -1,0 +1,467 @@
+// src/sphere3d.js
+import * as THREE from 'three';
+
+const vertexShader = `
+#define PHONG
+vec3 mod289(vec3 x) { return x - floor(x * (1.0 / 289.0)) * 289.0; }
+vec4 mod289(vec4 x) { return x - floor(x * (1.0 / 289.0)) * 289.0; }
+vec4 permute(vec4 x) { return mod289(((x*34.0)+1.0)*x); }
+vec4 taylorInvSqrt(vec4 r) { return 1.79284291400159 - 0.85373472095314 * r; }
+vec3 fade(vec3 t) { return t*t*t*(t*(t*6.0-15.0)+10.0); }
+float cnoise(vec3 P) {
+  vec3 Pi0 = floor(P);
+  vec3 Pi1 = Pi0 + vec3(1.0);
+  Pi0 = mod289(Pi0);
+  Pi1 = mod289(Pi1);
+  vec3 Pf0 = fract(P);
+  vec3 Pf1 = Pf0 - vec3(1.0);
+  vec4 ix = vec4(Pi0.x, Pi1.x, Pi0.x, Pi1.x);
+  vec4 iy = vec4(Pi0.yy, Pi1.yy);
+  vec4 iz0 = Pi0.zzzz;
+  vec4 iz1 = Pi1.zzzz;
+  vec4 ixy = permute(permute(ix) + iy);
+  vec4 ixy0 = permute(ixy + iz0);
+  vec4 ixy1 = permute(ixy + iz1);
+  vec4 gx0 = ixy0 * (1.0 / 7.0);
+  vec4 gy0 = fract(floor(gx0) * (1.0 / 7.0)) - 0.5;
+  gx0 = fract(gx0);
+  vec4 gz0 = vec4(0.5) - abs(gx0) - abs(gy0);
+  vec4 sz0 = step(gz0, vec4(0.0));
+  gx0 -= sz0 * (step(0.0, gx0) - 0.5);
+  gy0 -= sz0 * (step(0.0, gy0) - 0.5);
+  vec4 gx1 = ixy1 * (1.0 / 7.0);
+  vec4 gy1 = fract(floor(gx1) * (1.0 / 7.0)) - 0.5;
+  gx1 = fract(gx1);
+  vec4 gz1 = vec4(0.5) - abs(gx1) - abs(gy1);
+  vec4 sz1 = step(gz1, vec4(0.0));
+  gx1 -= sz1 * (step(0.0, gx1) - 0.5);
+  gy1 -= sz1 * (step(0.0, gy1) - 0.5);
+  vec3 g000 = vec3(gx0.x,gy0.x,gz0.x);
+  vec3 g100 = vec3(gx0.y,gy0.y,gz0.y);
+  vec3 g010 = vec3(gx0.z,gy0.z,gz0.z);
+  vec3 g110 = vec3(gx0.w,gy0.w,gz0.w);
+  vec3 g001 = vec3(gx1.x,gy1.x,gz1.x);
+  vec3 g101 = vec3(gx1.y,gy1.y,gz1.y);
+  vec3 g011 = vec3(gx1.z,gy1.z,gz1.z);
+  vec3 g111 = vec3(gx1.w,gy1.w,gz1.w);
+  vec4 norm0 = taylorInvSqrt(vec4(dot(g000, g000), dot(g010, g010), dot(g100, g100), dot(g110, g110)));
+  g000 *= norm0.x;
+  g010 *= norm0.y;
+  g100 *= norm0.z;
+  g110 *= norm0.w;
+  vec4 norm1 = taylorInvSqrt(vec4(dot(g001, g001), dot(g011, g011), dot(g101, g101), dot(g111, g111)));
+  g001 *= norm1.x;
+  g011 *= norm1.y;
+  g101 *= norm1.z;
+  g111 *= norm1.w;
+  float n000 = dot(g000, Pf0);
+  float n100 = dot(g100, vec3(Pf1.x, Pf0.yz));
+  float n010 = dot(g010, vec3(Pf0.x, Pf1.y, Pf0.z));
+  float n110 = dot(g110, vec3(Pf1.xy, Pf0.z));
+  float n001 = dot(g001, vec3(Pf0.xy, Pf1.z));
+  float n101 = dot(g101, vec3(Pf1.x, Pf0.y, Pf1.z));
+  float n011 = dot(g011, vec3(Pf0.x, Pf1.yz));
+  float n111 = dot(g111, Pf1);
+  vec3 fade_xyz = fade(Pf0);
+  vec4 n_z = mix(vec4(n000, n100, n010, n110), vec4(n001, n101, n011, n111), fade_xyz.z);
+  vec2 n_yz = mix(n_z.xy, n_z.zw, fade_xyz.y);
+  float n_xyz = mix(n_yz.x, n_yz.y, fade_xyz.x);
+  return 2.2 * n_xyz;
+}
+float pnoise(vec3 P, vec3 rep) {
+  vec3 Pi0 = mod(floor(P), rep);
+  vec3 Pi1 = mod(Pi0 + vec3(1.0), rep);
+  Pi0 = mod289(Pi0);
+  Pi1 = mod289(Pi1);
+  vec3 Pf0 = fract(P);
+  vec3 Pf1 = Pf0 - vec3(1.0);
+  vec4 ix = vec4(Pi0.x, Pi1.x, Pi0.x, Pi1.x);
+  vec4 iy = vec4(Pi0.yy, Pi1.yy);
+  vec4 iz0 = Pi0.zzzz;
+  vec4 iz1 = Pi1.zzzz;
+  vec4 ixy = permute(permute(ix) + iy);
+  vec4 ixy0 = permute(ixy + iz0);
+  vec4 ixy1 = permute(ixy + iz1);
+  vec4 gx0 = ixy0 * (1.0 / 7.0);
+  vec4 gy0 = fract(floor(gx0) * (1.0 / 7.0)) - 0.5;
+  gx0 = fract(gx0);
+  vec4 gz0 = vec4(0.5) - abs(gx0) - abs(gy0);
+  vec4 sz0 = step(gz0, vec4(0.0));
+  gx0 -= sz0 * (step(0.0, gx0) - 0.5);
+  gy0 -= sz0 * (step(0.0, gy0) - 0.5);
+  vec4 gx1 = ixy1 * (1.0 / 7.0);
+  vec4 gy1 = fract(floor(gx1) * (1.0 / 7.0)) - 0.5;
+  gx1 = fract(gx1);
+  vec4 gz1 = vec4(0.5) - abs(gx1) - abs(gy1);
+  vec4 sz1 = step(gz1, vec4(0.0));
+  gx1 -= sz1 * (step(0.0, gx1) - 0.5);
+  gy1 -= sz1 * (step(0.0, gy1) - 0.5);
+  vec3 g000 = vec3(gx0.x,gy0.x,gz0.x);
+  vec3 g100 = vec3(gx0.y,gy0.y,gz0.y);
+  vec3 g010 = vec3(gx0.z,gy0.z,gz0.z);
+  vec3 g110 = vec3(gx0.w,gy0.w,gz0.w);
+  vec3 g001 = vec3(gx1.x,gy1.x,gz1.x);
+  vec3 g101 = vec3(gx1.y,gy1.y,gz1.y);
+  vec3 g011 = vec3(gx1.z,gy1.z,gz1.z);
+  vec3 g111 = vec3(gx1.w,gy1.w,gz1.w);
+  vec4 norm0 = taylorInvSqrt(vec4(dot(g000, g000), dot(g010, g010), dot(g100, g100), dot(g110, g110)));
+  g000 *= norm0.x;
+  g010 *= norm0.y;
+  g100 *= norm0.z;
+  g110 *= norm0.w;
+  vec4 norm1 = taylorInvSqrt(vec4(dot(g001, g001), dot(g011, g011), dot(g101, g101), dot(g111, g111)));
+  g001 *= norm1.x;
+  g011 *= norm1.y;
+  g101 *= norm1.z;
+  g111 *= norm1.w;
+  float n000 = dot(g000, Pf0);
+  float n100 = dot(g100, vec3(Pf1.x, Pf0.yz));
+  float n010 = dot(g010, vec3(Pf0.x, Pf1.y, Pf0.z));
+  float n110 = dot(g110, vec3(Pf1.xy, Pf0.z));
+  float n001 = dot(g001, vec3(Pf0.xy, Pf1.z));
+  float n101 = dot(g101, vec3(Pf1.x, Pf0.y, Pf1.z));
+  float n011 = dot(g011, vec3(Pf0.x, Pf1.yz));
+  float n111 = dot(g111, Pf1);
+  vec3 fade_xyz = fade(Pf0);
+  vec4 n_z = mix(vec4(n000, n100, n010, n110), vec4(n001, n101, n011, n111), fade_xyz.z);
+  vec2 n_yz = mix(n_z.xy, n_z.zw, fade_xyz.y);
+  float n_xyz = mix(n_yz.x, n_yz.y, fade_xyz.x);
+  return 2.2 * n_xyz;
+}
+float turbulence(vec3 p) {
+  float w = 100.0;
+  float t = -0.5;
+  for (float f = 1.0; f <= 10.0; f++) {
+    float power = pow(2.0, f);
+    t += abs(pnoise(vec3(power * p), vec3(10.0, 10.0, 10.0)) / power);
+  }
+  return t;
+}
+uniform float time;
+varying vec2 vUv;
+varying float noise;
+varying vec3 vViewPosition;
+#include <common>
+#include <batching_pars_vertex>
+#include <uv_pars_vertex>
+#include <displacementmap_pars_vertex>
+#include <envmap_pars_vertex>
+#include <color_pars_vertex>
+#include <fog_pars_vertex>
+#include <normal_pars_vertex>
+#include <morphtarget_pars_vertex>
+#include <skinning_pars_vertex>
+#include <shadowmap_pars_vertex>
+#include <logdepthbuf_pars_vertex>
+#include <clipping_planes_pars_vertex>
+void main() {
+  #include <uv_vertex>
+  #include <color_vertex>
+  #include <morphcolor_vertex>
+  #include <batching_vertex>
+  #include <beginnormal_vertex>
+  #include <morphnormal_vertex>
+  #include <skinbase_vertex>
+  #include <skinnormal_vertex>
+  #include <defaultnormal_vertex>
+  #include <normal_vertex>
+  #include <begin_vertex>
+  #include <morphtarget_vertex>
+  #include <skinning_vertex>
+  #include <displacementmap_vertex>
+  #include <project_vertex>
+  #include <logdepthbuf_vertex>
+  #include <clipping_planes_vertex>
+  vViewPosition = -mvPosition.xyz;
+  #include <worldpos_vertex>
+  #include <envmap_vertex>
+  #include <shadowmap_vertex>
+  #include <fog_vertex>
+  vUv = uv;
+  noise = turbulence(0.01 * position + normal + time * 0.8);
+  vec3 displacement = vec3(position.x * noise, position.y * noise, position.z * noise);
+  gl_Position = projectionMatrix * modelViewMatrix * vec4((position + normal) + displacement, 1.0);
+}
+`;
+
+const fragmentShader = `
+#define PHONG
+uniform vec3 diffuse;
+uniform vec3 emissive;
+uniform vec3 specular;
+uniform float shininess;
+uniform float opacity;
+uniform float time;
+varying vec2 vUv;
+varying vec3 newPosition;
+varying float noise;
+#include <common>
+#include <packing>
+#include <dithering_pars_fragment>
+#include <color_pars_fragment>
+#include <uv_pars_fragment>
+#include <map_pars_fragment>
+#include <alphamap_pars_fragment>
+#include <alphatest_pars_fragment>
+#include <alphahash_pars_fragment>
+#include <aomap_pars_fragment>
+#include <lightmap_pars_fragment>
+#include <emissivemap_pars_fragment>
+#include <envmap_common_pars_fragment>
+#include <envmap_pars_fragment>
+#include <fog_pars_fragment>
+#include <bsdfs>
+#include <lights_pars_begin>
+#include <normal_pars_fragment>
+#include <lights_phong_pars_fragment>
+#include <shadowmap_pars_fragment>
+#include <bumpmap_pars_fragment>
+#include <normalmap_pars_fragment>
+#include <specularmap_pars_fragment>
+#include <logdepthbuf_pars_fragment>
+#include <clipping_planes_pars_fragment>
+void main() {
+  #include <clipping_planes_fragment>
+  vec3 color = vec3(vUv * (0.2 - 2.0 * noise), 1.0);
+  vec3 finalColors = vec3(color.b * 1.5, color.r, color.r);
+  vec4 diffuseColor = vec4(cos(finalColors * noise * 3.0), 1.0);
+  ReflectedLight reflectedLight = ReflectedLight(vec3(0.0), vec3(0.0), vec3(0.0), vec3(0.0));
+  vec3 totalEmissiveRadiance = emissive;
+  #include <logdepthbuf_fragment>
+  #include <map_fragment>
+  #include <color_fragment>
+  #include <alphamap_fragment>
+  #include <alphatest_fragment>
+  #include <alphahash_fragment>
+  #include <specularmap_fragment>
+  #include <normal_fragment_begin>
+  #include <normal_fragment_maps>
+  #include <emissivemap_fragment>
+  #include <lights_phong_fragment>
+  #include <lights_fragment_begin>
+  #include <lights_fragment_maps>
+  #include <lights_fragment_end>
+  #include <aomap_fragment>
+  vec3 outgoingLight = reflectedLight.directDiffuse + reflectedLight.indirectDiffuse + reflectedLight.directSpecular + reflectedLight.indirectSpecular + totalEmissiveRadiance;
+  #include <envmap_fragment>
+  #include <opaque_fragment>
+  #include <tonemapping_fragment>
+  #include <colorspace_fragment>
+  #include <fog_fragment>
+  #include <premultiplied_alpha_fragment>
+  #include <dithering_fragment>
+  gl_FragColor = vec4(outgoingLight, diffuseColor.a);
+}
+`;
+
+const cssStyles = `
+.canvas {
+  position: absolute;
+  width: 100vw;
+  inset: 0;
+  opacity: 0;
+  transition-property: opacity;
+  transition-duration: 3s;
+  transition-timing-function: cubic-bezier(0.16, 1, 0.3, 1);
+}
+.canvas[data-visible="true"] {
+  opacity: 1;
+}
+`;
+
+class DisplacementSphere {
+  constructor(container = document.body) {
+    this.container = container;
+    this.canvas = document.createElement('canvas');
+    this.canvas.classList.add('canvas');
+    this.canvas.setAttribute('aria-hidden', 'true');
+    this.container.appendChild(this.canvas);
+
+    const styleTag = document.createElement('style');
+    styleTag.textContent = cssStyles;
+    document.head.appendChild(styleTag);
+
+    this.start = Date.now();
+    this.mouse = new THREE.Vector2(0.8, 0.5);
+    this.renderer = new THREE.WebGLRenderer({
+      canvas: this.canvas,
+      antialias: false,
+      alpha: true,
+      powerPreference: 'high-performance',
+    });
+    this.renderer.setPixelRatio(1);
+    this.renderer.outputColorSpace = THREE.LinearSRGBColorSpace;
+    this.scene = new THREE.Scene();
+    this.camera = new THREE.PerspectiveCamera(54, window.innerWidth / window.innerHeight, 0.1, 100);
+    this.camera.position.z = 52;
+
+    this.material = new THREE.MeshPhongMaterial();
+    this.uniforms = {};
+    this.material.onBeforeCompile = (shader) => {
+      this.uniforms = THREE.UniformsUtils.merge([
+        shader.uniforms,
+        { time: { value: 0 } },
+      ]);
+      shader.uniforms = this.uniforms;
+      shader.vertexShader = vertexShader;
+      shader.fragmentShader = fragmentShader;
+    };
+
+    this.geometry = new THREE.SphereGeometry(32, 128, 128);
+    this.sphere = new THREE.Mesh(this.geometry, this.material);
+    this.sphere.position.z = 0;
+    this.scene.add(this.sphere);
+
+    this.themeQuery = window.matchMedia('(prefers-color-scheme: light)');
+    this.theme = this.themeQuery.matches ? 'dark' : 'light';
+    this.updateLights();
+    this.themeQuery.addEventListener('change', this.onThemeChange.bind(this));
+
+    this.reduceMotionQuery = window.matchMedia('(prefers-reduced-motion: reduce)');
+    this.reduceMotion = this.reduceMotionQuery.matches;
+    this.reduceMotionQuery.addEventListener('change', this.onReduceMotionChange.bind(this));
+
+    this.rotationX = 0;
+    this.rotationY = 0;
+    this.targetRotationX = 0;
+    this.targetRotationY = 0;
+
+    this.onResize = this.onResize.bind(this);
+    window.addEventListener('resize', this.onResize);
+    this.onResize();
+
+    this.onMouseMoveThrottled = this.throttle(this.onMouseMove.bind(this), 100);
+    if (!this.reduceMotion) {
+      window.addEventListener('mousemove', this.onMouseMoveThrottled);
+    }
+
+    this.isVisible = false;
+    this.observer = new IntersectionObserver((entries) => {
+      this.isVisible = entries[0].isIntersecting;
+      if (this.isVisible && !this.reduceMotion) {
+        window.addEventListener('mousemove', this.onMouseMoveThrottled);
+        this.animate();
+      } else {
+        window.removeEventListener('mousemove', this.onMouseMoveThrottled);
+      }
+    });
+    this.observer.observe(this.canvas);
+
+    if (!this.reduceMotion && this.isVisible) {
+      this.animationId = requestAnimationFrame(this.animate.bind(this));
+    } else {
+      this.render();
+    }
+
+    this.canvas.setAttribute('data-visible', 'true');
+  }
+
+  updateLights() {
+    if (this.lights) {
+      this.lights.forEach((light) => this.scene.remove(light));
+    }
+    const dirIntensity = this.theme === 'light' ? 1.8 : 2.0;
+    const ambIntensity = this.theme === 'light' ? 2.7 : 0.4;
+    const dirLight = new THREE.DirectionalLight(0xffffff, dirIntensity);
+    dirLight.position.set(100, 100, 200);
+    const ambientLight = new THREE.AmbientLight(0xffffff, ambIntensity);
+    this.lights = [dirLight, ambientLight];
+    this.lights.forEach((light) => this.scene.add(light));
+  }
+
+  onThemeChange(e) {
+    this.theme = e.matches ? 'dark' : 'light';
+    this.updateLights();
+  }
+
+  onReduceMotionChange(e) {
+    this.reduceMotion = e.matches;
+    if (this.reduceMotion) {
+      cancelAnimationFrame(this.animationId);
+      window.removeEventListener('mousemove', this.onMouseMoveThrottled);
+      this.render();
+    } else if (this.isVisible) {
+      window.addEventListener('mousemove', this.onMouseMoveThrottled);
+      this.animationId = requestAnimationFrame(this.animate.bind(this));
+    }
+  }
+
+  onResize() {
+    const width = window.innerWidth;
+    const height = window.innerHeight;
+    const adjustedHeight = height + height * 0.3;
+    this.renderer.setSize(width, adjustedHeight);
+    this.camera.aspect = width / adjustedHeight;
+    this.camera.updateProjectionMatrix();
+
+    if (width <= 480) {
+      this.sphere.position.x = 14;
+      this.sphere.position.y = 10;
+    } else if (width <= 768) {
+      this.sphere.position.x = 18;
+      this.sphere.position.y = 14;
+    } else {
+      this.sphere.position.x = 22;
+      this.sphere.position.y = 16;
+    }
+
+    if (this.reduceMotion) {
+      this.render();
+    }
+  }
+
+  onMouseMove(event) {
+    const position = {
+      x: event.clientX / window.innerWidth,
+      y: event.clientY / window.innerHeight,
+    };
+    this.targetRotationX = position.y / 2;
+    this.targetRotationY = position.x / 2;
+  }
+
+  animate() {
+    this.animationId = requestAnimationFrame(this.animate.bind(this));
+
+    if (this.uniforms.time) {
+      this.uniforms.time.value = 0.00005 * (Date.now() - this.start);
+    }
+
+    this.sphere.rotation.z += 0.001;
+    this.rotationX += (this.targetRotationX - this.rotationX) * 0.1;
+    this.rotationY += (this.targetRotationY - this.rotationY) * 0.1;
+    this.sphere.rotation.x = this.rotationX;
+    this.sphere.rotation.y = this.rotationY;
+
+    this.render();
+  }
+
+  render() {
+    this.renderer.render(this.scene, this.camera);
+  }
+
+  throttle(fn, delay) {
+    let last = 0;
+    return (...args) => {
+      const now = Date.now();
+      if (now - last < delay) return;
+      last = now;
+      fn(...args);
+    };
+  }
+
+  destroy() {
+    window.removeEventListener('resize', this.onResize);
+    window.removeEventListener('mousemove', this.onMouseMoveThrottled);
+    this.themeQuery.removeEventListener('change', this.onThemeChange.bind(this));
+    this.reduceMotionQuery.removeEventListener('change', this.onReduceMotionChange.bind(this));
+    this.observer.disconnect();
+    cancelAnimationFrame(this.animationId);
+    this.geometry.dispose();
+    this.material.dispose();
+    this.scene.dispose();
+    this.renderer.dispose();
+    this.container.removeChild(this.canvas);
+  }
+}
+
+export { DisplacementSphere };

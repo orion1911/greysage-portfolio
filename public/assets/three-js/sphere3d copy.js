@@ -1,0 +1,311 @@
+// Sphere 3D
+
+const start = Date.now();
+const canvas = document.getElementById('scene');
+
+if (!canvas) {
+  console.error('Canvas with id "scene" not found.');
+} else {
+  // Shaders
+  const sphereFragShader = `
+    #define PHONG
+
+    uniform vec3 diffuse;
+    uniform vec3 emissive;
+    uniform vec3 specular;
+    uniform float shininess;
+    uniform float opacity;
+    uniform float time;
+    varying vec2 vUv;
+    varying vec3 vNormal;
+    varying float noise;
+
+    #include <common>
+    #include <packing>
+    #include <dithering_pars_fragment>
+    #include <color_pars_fragment>
+    #include <uv_pars_fragment>
+    #include <map_pars_fragment>
+    #include <alphamap_pars_fragment>
+    #include <alphatest_pars_fragment>
+    #include <aomap_pars_fragment>
+    #include <lightmap_pars_fragment>
+    #include <emissivemap_pars_fragment>
+    #include <envmap_common_pars_fragment>
+    #include <envmap_pars_fragment>
+    #include <fog_pars_fragment>
+    #include <bsdfs>
+    #include <lights_pars_begin>
+    #include <normal_pars_fragment>
+    #include <lights_phong_pars_fragment>
+    #include <shadowmap_pars_fragment>
+    #include <bumpmap_pars_fragment>
+    #include <normalmap_pars_fragment>
+    #include <specularmap_pars_fragment>
+    #include <logdepthbuf_pars_fragment>
+    #include <clipping_planes_pars_fragment>
+
+    void main() {
+      #include <clipping_planes_fragment>
+
+      vec3 color = vec3(0.9 + vUv * (0.3 - 1.0 * noise), 1.0); // Brighter base with adjusted noise
+      vec3 finalColors = vec3(color.b * 2.0, color.r * 1.5, color.g); // Increased multipliers for lighter shade
+      vec4 diffuseColor = vec4(cos(finalColors * noise * 3.0) * 1.2, 1.0); // Amplify cosine effect for brightness
+      ReflectedLight reflectedLight = ReflectedLight(vec3(0.0), vec3(0.0), vec3(0.0), vec3(0.0));
+      vec3 totalEmissiveRadiance = emissive + vec3(0.2, 0.2, 0.2); // Stronger emissive glow
+
+      #include <logdepthbuf_fragment>
+      #include <map_fragment>
+      #include <color_fragment>
+      #include <alphamap_fragment>
+      #include <alphatest_fragment>
+      #include <specularmap_fragment>
+      #include <normal_fragment_begin>
+      #include <normal_fragment_maps>
+      #include <emissivemap_fragment>
+
+      // accumulation
+      #include <lights_phong_fragment>
+      #include <lights_fragment_begin>
+      #include <lights_fragment_maps>
+      #include <lights_fragment_end>
+
+      // modulation
+      #include <aomap_fragment>
+
+      vec3 outgoingLight = reflectedLight.directDiffuse + reflectedLight.indirectDiffuse + reflectedLight.directSpecular + reflectedLight.indirectSpecular + totalEmissiveRadiance;
+
+      #include <envmap_fragment>
+      #include <output_fragment>
+      #include <tonemapping_fragment>
+      #include <encodings_fragment> // Replaced <colorspace_fragment>
+      #include <fog_fragment>
+      #include <premultiplied_alpha_fragment>
+      #include <dithering_fragment>
+
+      gl_FragColor = vec4(outgoingLight, diffuseColor.a);
+    }
+  `;
+
+  const sphereVertShader = `
+    #define PHONG
+
+    uniform float time;
+    varying vec2 vUv;
+    varying vec3 vNormal;
+    varying float noise;
+
+    vec3 mod289(vec3 x) { return x - floor(x * (1.0 / 289.0)) * 289.0; }
+    vec4 mod289(vec4 x) { return x - floor(x * (1.0 / 289.0)) * 289.0; }
+    vec4 permute(vec4 x) { return mod289(((x*34.0)+1.0)*x); }
+    vec4 taylorInvSqrt(vec4 r) { return 1.79284291400159 - 0.85373472095314 * r; }
+    vec3 fade(vec3 t) { return t*t*t*(t*(t*6.0-15.0)+10.0); }
+
+    float cnoise(vec3 P) {
+      vec3 Pi0 = floor(P);
+      vec3 Pi1 = Pi0 + vec3(1.0);
+      Pi0 = mod289(Pi0);
+      Pi1 = mod289(Pi1);
+      vec3 Pf0 = fract(P);
+      vec3 Pf1 = Pf0 - vec3(1.0);
+      vec4 ix = vec4(Pi0.x, Pi1.x, Pi0.x, Pi1.x);
+      vec4 iy = vec4(Pi0.yy, Pi1.yy);
+      vec4 iz0 = Pi0.zzzz;
+      vec4 iz1 = Pi1.zzzz;
+      vec4 ixy = permute(permute(ix) + iy);
+      vec4 ixy0 = permute(ixy + iz0);
+      vec4 ixy1 = permute(ixy + iz1);
+      vec4 gx0 = ixy0 * (1.0 / 7.0);
+      vec4 gy0 = fract(floor(gx0) * (1.0 / 7.0)) - 0.5;
+      gx0 = fract(gx0);
+      vec4 gz0 = vec4(0.5) - abs(gx0) - abs(gy0);
+      vec4 sz0 = step(gz0, vec4(0.0));
+      gx0 -= sz0 * (step(0.0, gx0) - 0.5);
+      gy0 -= sz0 * (step(0.0, gy0) - 0.5);
+      vec4 gx1 = ixy1 * (1.0 / 7.0);
+      vec4 gy1 = fract(floor(gx1) * (1.0 / 7.0)) - 0.5;
+      gx1 = fract(gx1);
+      vec4 gz1 = vec4(0.5) - abs(gx1) - abs(gy1);
+      vec4 sz1 = step(gz1, vec4(0.0));
+      gx1 -= sz1 * (step(0.0, gx1) - 0.5);
+      gy1 -= sz1 * (step(0.0, gy1) - 0.5);
+      vec3 g000 = vec3(gx0.x,gy0.x,gz0.x);
+      vec3 g100 = vec3(gx0.y,gy0.y,gz0.y);
+      vec3 g010 = vec3(gx0.z,gy0.z,gz0.z);
+      vec3 g110 = vec3(gx0.w,gy0.w,gz0.w);
+      vec3 g001 = vec3(gx1.x,gy1.x,gz1.x);
+      vec3 g101 = vec3(gx1.y,gy1.y,gz1.y);
+      vec3 g011 = vec3(gx1.z,gy1.z,gz1.z);
+      vec3 g111 = vec3(gx1.w,gy1.w,gz1.w);
+      vec4 norm0 = taylorInvSqrt(vec4(dot(g000, g000), dot(g010, g010), dot(g100, g100), dot(g110, g110)));
+      g000 *= norm0.x; g010 *= norm0.y; g100 *= norm0.z; g110 *= norm0.w;
+      vec4 norm1 = taylorInvSqrt(vec4(dot(g001, g001), dot(g011, g011), dot(g101, g101), dot(g111, g111)));
+      g001 *= norm1.x; g011 *= norm1.y; g101 *= norm1.z; g111 *= norm1.w;
+      float n000 = dot(g000, Pf0); float n100 = dot(g100, vec3(Pf1.x, Pf0.yz));
+      float n010 = dot(g010, vec3(Pf0.x, Pf1.y, Pf0.z)); float n110 = dot(g110, vec3(Pf1.xy, Pf0.z));
+      float n001 = dot(g001, vec3(Pf0.xy, Pf1.z)); float n101 = dot(g101, vec3(Pf1.x, Pf0.y, Pf1.z));
+      float n011 = dot(g011, vec3(Pf0.x, Pf1.yz)); float n111 = dot(g111, Pf1);
+      vec3 fade_xyz = fade(Pf0);
+      vec4 n_z = mix(vec4(n000, n100, n010, n110), vec4(n001, n101, n011, n111), fade_xyz.z);
+      vec2 n_yz = mix(n_z.xy, n_z.zw, fade_xyz.y);
+      float n_xyz = mix(n_yz.x, n_yz.y, fade_xyz.x);
+      return 2.2 * n_xyz;
+    }
+
+    float turbulence(vec3 p) {
+      float w = 100.0;
+      float t = -0.5;
+      for (float f = 1.0 ; f <= 10.0 ; f++) {
+        float power = pow(2.0, f);
+        t += abs(cnoise(vec3(power * p)) / power);
+      }
+      return t;
+    }
+
+    #include <common>
+    #include <uv_pars_vertex>
+    #include <uv2_pars_vertex>
+    #include <displacementmap_pars_vertex>
+    #include <envmap_pars_vertex>
+    #include <color_pars_vertex>
+    #include <fog_pars_vertex>
+    #include <normal_pars_vertex>
+    #include <morphtarget_pars_vertex>
+    #include <skinning_pars_vertex>
+    #include <shadowmap_pars_vertex>
+    #include <logdepthbuf_pars_vertex>
+    #include <clipping_planes_pars_vertex>
+
+    void main() {
+      #include <uv_vertex>
+      #include <color_vertex>
+      #include <morphcolor_vertex>
+      #include <beginnormal_vertex>
+      #include <morphnormal_vertex>
+      #include <skinbase_vertex>
+      #include <skinnormal_vertex>
+      #include <defaultnormal_vertex>
+      #include <normal_vertex>
+
+      #include <begin_vertex>
+      #include <morphtarget_vertex>
+      #include <skinning_vertex>
+      #include <displacementmap_vertex>
+      #include <project_vertex>
+      #include <logdepthbuf_vertex>
+      #include <clipping_planes_vertex>
+
+      vViewPosition = -mvPosition.xyz;
+
+      #include <worldpos_vertex>
+      #include <envmap_vertex>
+      #include <shadowmap_vertex>
+      #include <fog_vertex>
+
+      vUv = uv;
+
+      noise = turbulence(0.01 * position + normal + time * 0.8);
+      vec3 displacement = vec3(position.x * noise, position.y * noise, position.z * noise);
+      gl_Position = projectionMatrix * modelViewMatrix * vec4(position + normal + displacement, 1.0);
+    }
+  `;
+
+  // Init
+  const rand = Math.random();
+  const renderer = new THREE.WebGLRenderer({ canvas, powerPreference: 'high-performance' });
+  const camera = new THREE.PerspectiveCamera(55, window.innerWidth / window.innerHeight, 0.1, 200);
+  const scene = new THREE.Scene();
+
+  const uniforms = THREE.UniformsUtils.merge([
+    THREE.UniformsLib['ambient'],
+    THREE.UniformsLib['lights'],
+    THREE.ShaderLib.phong.uniforms,
+    { time: { type: 'f', value: 0 } },
+  ]);
+
+  const material = new THREE.ShaderMaterial({
+    uniforms: uniforms,
+    vertexShader: sphereVertShader,
+    fragmentShader: sphereFragShader,
+    lights: true,
+  });
+
+  const geometry = new THREE.SphereGeometry(32, 128, 128);
+  const sphere = new THREE.Mesh(geometry, material);
+  renderer.setSize(window.innerWidth, window.innerHeight);
+  camera.position.z = 52;
+
+  scene.add(sphere);
+  sphere.position.z = 0;
+  sphere.modifier = rand;
+
+  // Light
+  scene.background = new THREE.Color(0xF0F0F0); // Match React's light background
+
+  const light = new THREE.DirectionalLight(0xffffff, 1.0);
+  light.position.z = 200;
+  light.position.x = 100;
+  light.position.y = 100;
+  scene.add(light);
+
+  const ambientLight = new THREE.AmbientLight(0xffffff, 0.3);
+  scene.add(ambientLight);
+
+  // Handle Resize
+  const handleResize = () => {
+    const canvasHeight = window.innerHeight;
+    const windowWidth = window.innerWidth;
+    const fullHeight = canvasHeight + canvasHeight * 0.3;
+    canvas.style.height = `${fullHeight}px`;
+    renderer.setSize(windowWidth, fullHeight);
+    camera.aspect = windowWidth / fullHeight;
+    camera.updateProjectionMatrix();
+
+    if (windowWidth <= 696) {
+      sphere.position.x = 14;
+      sphere.position.y = 10;
+    } else if (windowWidth <= 1024) {
+      sphere.position.x = 18;
+      sphere.position.y = 14;
+    } else {
+      sphere.position.x = 22;
+      sphere.position.y = 16;
+    }
+  };
+
+  window.addEventListener('resize', handleResize);
+  handleResize();
+
+  // Interaction (simplified, no TWEEN)
+  let ticking = false;
+  let animationFrame = null;
+
+  const onMouseMove = (event) => {
+    const animate = () => {
+      const position = {
+        x: event.clientX / window.innerWidth,
+        y: event.clientY / window.innerHeight,
+      };
+      sphere.rotation.x = position.y / 2;
+      sphere.rotation.y = position.x / 2;
+      ticking = false;
+    };
+
+    if (!ticking) {
+      animationFrame = requestAnimationFrame(animate);
+      ticking = true;
+    }
+  };
+
+  window.addEventListener('mousemove', onMouseMove);
+
+  // Animate
+  const animate = () => {
+    const animation = requestAnimationFrame(animate);
+    uniforms.time.value = 0.00005 * (Date.now() - start);
+    sphere.rotation.z += 0.001;
+    renderer.render(scene, camera);
+  };
+
+  animate();
+}

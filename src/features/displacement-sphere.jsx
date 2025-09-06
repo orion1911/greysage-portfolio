@@ -3,6 +3,8 @@ import { Transition } from '../components/transition';
 import { useReducedMotion, useSpring } from 'framer-motion';
 import { useInViewport, useWindowSize } from '../hooks';
 import { startTransition, useEffect, useRef } from 'react';
+import fragmentShader from './displacement-sphere-fragment.glsl';
+import vertexShader from './displacement-sphere-vertex.glsl';
 import {
   AmbientLight,
   DirectionalLight,
@@ -19,8 +21,8 @@ import {
 import { media } from '../components/utils/style';
 import { throttle } from '../components/utils/throttle';
 import { cleanRenderer, cleanScene, removeLights } from '../components/utils/three';
-import fragmentShader from './displacement-sphere-fragment.glsl?raw';
-import vertexShader from './displacement-sphere-vertex.glsl?raw';
+// import fragmentShader from './displacement-sphere-fragment.glsl?raw';
+// import vertexShader from './displacement-sphere-vertex.glsl?raw';
 import styles from './displacement-sphere.module.css';
 
 const springConfig = {
@@ -190,7 +192,7 @@ export const DisplacementSphere = props => {
           className={styles.canvas}
           data-visible={visible}
           ref={nodeRef}
-          {...props}
+          // {...props}
         />
       )}
     </Transition>

@@ -146,7 +146,7 @@ export const Navbar = () => {
         prefetch="intent"
         to={location.pathname === '/' ? '/#intro' : '/'}
         data-navbar-item
-        className={styles.logo}
+        className={styles.logo + ' ' + styles.glassEffect}
         style={{ paddingBottom: '8px'}}
         aria-label={`${config.name}, ${config.role}`}
         onClick={handleMobileNavClick}

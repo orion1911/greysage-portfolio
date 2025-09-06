@@ -142,6 +142,7 @@
 .word.discipline {
   color: var(--text, #333); /* Fallback for text color */
   transition: opacity 1.5s ease; /* For exit fade-out */
+  /* font-size: 42px !important; */
 }
 
 .word::after {

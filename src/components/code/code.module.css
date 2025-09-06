@@ -183,7 +183,7 @@
       transition-duration: var(--durationS);
       transition-timing-function: var(--bezierFastoutSlowin);
 
-      @media (prefers-reduced-motion: no-preference) {
+      @media (--mediaUseMotion) {
         transition-property: opacity, transform;
         transform: scale(0.5);
       }

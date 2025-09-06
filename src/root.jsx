@@ -6,11 +6,13 @@ import styles from './root.module.css';
 import './reset.module.css';
 import './global.module.css';
 import Home from './features/home';
+// import Sphere3D from './features/sphere3D';
 
 const Root = () => {
   const { state } = useNavigate();
   return (
     <>
+    {/* <Sphere3D /> */}
     <Navbar />
     <main
             id="main-content"
@@ -47,8 +49,19 @@ function App() {
     styleElement.innerHTML = themeStyles;
     document.head.appendChild(styleElement);
 
+    // const canvasElement = document.createElement('canvas');
+    // canvasElement.id = 'scene';
+    // document.body.appendChild(canvasElement);
+
+    // const script = document.createElement('script');
+    // script.src = './sphere3d.js';
+    // script.async = true;
+    // document.html.appendChild(script);
+
     return () => {
       document.head.removeChild(styleElement);
+      // document.body.removeChild(canvasElement);
+      // document.html.removeChild(script);
     };
   }, []);
 

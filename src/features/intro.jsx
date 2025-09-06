@@ -7,14 +7,19 @@ import { Transition } from '../components/transition';
 import { VisuallyHidden } from '../components/visually-hidden';
 import { Link as RouterLink } from 'react-router-dom';
 import { useInterval, usePrevious, useScrollToHash } from '../hooks';
-import { Fragment, Suspense, useEffect, useState, useRef } from 'react';
+import { Fragment, Suspense, lazy, useEffect, useState, useRef } from 'react';
 import { cssProps } from '../components/utils/style';
 import config from '../config.json';
 import { useHydrated } from '../hooks/useHydrated';
-import './intro.module.css';
+// import './intro.module.css';
 import styles from './intro.module.css';
-import { DisplacementSphere } from './displacement-sphere';
 import { AnimatePresence } from 'framer-motion';
+import Sphere3D from './sphere3D';
+
+// const DisplacementSphere = lazy(() =>
+//   import('./displacement-sphere').then(module => ({ default: module.DisplacementSphere }))
+// );
+
 
 export function Intro({ id, sectionRef, scrollIndicatorHidden, ...rest }) {
   const { theme } = useTheme();
@@ -47,7 +52,6 @@ export function Intro({ id, sectionRef, scrollIndicatorHidden, ...rest }) {
   );
 
   useEffect(() => {
-    console.log('tokens', tokens);
     if (prevTheme && prevTheme !== theme) {
       setDisciplineIndex(0);
     }
@@ -97,9 +101,10 @@ export function Intro({ id, sectionRef, scrollIndicatorHidden, ...rest }) {
       <Transition in key={theme} timeout={totalAnimationTime}>
         {({ visible, status }) => (
           <>
-            {true && (
+            {isHydrated && (
               <Suspense>
-                <DisplacementSphere />
+                {/* <DisplacementSphere /> */}
+                <Sphere3D />
               </Suspense>
             )}
             <header className={styles.text}>
@@ -133,9 +138,10 @@ export function Intro({ id, sectionRef, scrollIndicatorHidden, ...rest }) {
                           <span
                             aria-hidden
                             ref={nodeRef}
-                            className={`${styles.word} ${styles.discipline}`} /* Add discipline class */
+                            className={`${styles.word} ${styles.discipline}`}
                             data-plus={true}
                             data-status={status}
+                            data-level='4'
                             style={cssProps({ delay: tokens.base.durationL })}
                           >
                             {currentDiscipline}
@@ -154,7 +160,7 @@ export function Intro({ id, sectionRef, scrollIndicatorHidden, ...rest }) {
               data-hidden={scrollIndicatorHidden}
               onClick={handleScrollClick}
             >
-              <VisuallyHidden>Scroll to projects</VisuallyHidden>
+              <VisuallyHidden>Scroll</VisuallyHidden>
             </RouterLink>
             <RouterLink
               to="/#section-1"

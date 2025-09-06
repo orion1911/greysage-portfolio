@@ -17,7 +17,7 @@
     transform-origin: left center;
     transform: scaleX(1);
 
-    @media (prefers-reduced-motion: no-preference) {
+    @media (--mediaUseMotion) {
       transition-property: transform, opacity;
     }
 
@@ -40,7 +40,7 @@
     height: var(--notchHeight);
     top: var(--lineHeight);
 
-    @media (prefers-reduced-motion: no-preference) {
+    @media (--mediaUseMotion) {
       transition-property: clip-path, opacity;
     }
 

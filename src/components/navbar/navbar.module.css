@@ -1,4 +1,16 @@
 @layer layout {
+
+  .glassEffect {
+    /* Add CSS properties for glass effect */
+    background: transparent !important;
+    backdrop-filter: blur(5px);
+    border-radius: 32px;
+    -webkit-backdrop-filter: blur(5px);
+    /* background-color: rgba(255, 255, 255, 0.2);
+    border: 1px solid rgba(255, 255, 255, 0.3);
+    box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1); */
+  }
+
   .navbar {
     --headerNavFontSize: calc((16 / 16) * 1rem);
 
@@ -19,7 +31,8 @@
       --headerNavFontSize: calc((22 / 16) * 1rem);
     }
 
-    @media (max-width: 696px), (max-height: 696px) {
+    @media (max-width: 696px),
+    (max-height: 696px) {
       bottom: auto;
     }
   }
@@ -43,7 +56,8 @@
     flex: 1 1 auto;
     max-width: var(--space2XL);
 
-    @media (max-width: 696px), (max-height: 696px) {
+    @media (max-width: 696px),
+    (max-height: 696px) {
       display: none;
     }
   }
@@ -107,7 +121,8 @@
     position: relative;
     z-index: var(--zIndex2);
 
-    @media (max-width: 696px), (max-height: 696px) {
+    @media (max-width: 696px),
+    (max-height: 696px) {
       flex-direction: row;
       position: absolute;
       bottom: var(--spaceXL);
@@ -161,7 +176,8 @@
     -webkit-backdrop-filter: var(--backdrop);
     backdrop-filter: var(--backdrop);
 
-    @media (max-width: 696px), (max-height: 696px) {
+    @media (max-width: 696px),
+    (max-height: 696px) {
       display: flex;
     }
 
@@ -198,7 +214,8 @@
       top: auto;
     }
 
-    @media (max-width: 696pxS), (max-height: 360px) {
+    @media (max-width: 696pxS),
+    (max-height: 360px) {
       --headerNavFontSize: calc((18 / 16) * 1rem);
     }
 

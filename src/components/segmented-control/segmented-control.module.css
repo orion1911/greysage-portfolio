@@ -73,7 +73,7 @@
     transform: translate3d(var(--left), 0, 0);
     width: var(--width);
 
-    @media (prefers-reduced-motion: no-preference) {
+    @media (--mediaUseMotion) {
       transition-property: width, transform;
       transition-duration: var(--durationM);
       transition-timing-function: var(--bezierFastoutSlowin);
@@ -87,7 +87,7 @@
       filter: brightness(2.2);
       clip-path: polygon(0 0, 100% 0, 100% 100%, 100% 100%, 0 100%);
 
-      @media (prefers-reduced-motion: no-preference) {
+      @media (--mediaUseMotion) {
         transition: clip-path var(--durationM) var(--bezierFastoutSlowin);
       }
     }

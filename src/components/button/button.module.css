@@ -42,7 +42,7 @@
       );
     }
 
-    @media (prefers-reduced-motion: no-preference) {
+    @media (--mediaUseMotion) {
       transition-property: transform, opacity, color, background;
 
       &:hover {
@@ -90,7 +90,7 @@
         padding-left: calc(var(--buttonSpace) / 2);
       }
 
-      @media (prefers-reduced-motion: no-preference) {
+      @media (--mediaUseMotion) {
         &::after {
           transition: transform var(--durationM) var(--bezierFastoutSlowin);
         }
@@ -160,7 +160,7 @@
     transition-duration: var(--durationS);
     transition-timing-function: var(--bezierFastoutSlowin);
 
-    @media (prefers-reduced-motion: no-preference) {
+    @media (--mediaUseMotion) {
       transition-property: transform, opacity, fill;
     }
 
@@ -172,7 +172,7 @@
       margin-left: var(--spaceS);
     }
 
-    @media (prefers-reduced-motion: no-preference) {
+    @media (--mediaUseMotion) {
       .button:hover &[data-shift='true'] {
         transform: translate3d(var(--spaceXS), 0, 0);
       }

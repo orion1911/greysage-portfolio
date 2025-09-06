@@ -8,7 +8,7 @@ import styles from './profile.module.css';
 
 const ProfileText = ({ visible, titleId }) => (
   <Fragment>
-    <Heading className={styles.title} data-visible={visible} level={3} id={titleId}>
+    <Heading className={styles.title} data-visible={visible} level={4} id={titleId}>
       <DecoderText text="Why Partner with GREYSAGE?" start={visible} delay={500} />
     </Heading>
     <Text className={styles.description} data-visible={visible} size="l" as="p">
@@ -33,7 +33,7 @@ export const Profile = ({ id, visible, sectionRef }) => {
       ref={sectionRef}
       aria-labelledby={titleId}
       tabIndex={-1}
-      style={{ marginTop: 0, paddingTop: 0, marginBottom: 0, paddingBottom: 0, minHeight: '50vh' }}
+      style={{ marginTop: 0, paddingTop: 0, marginBottom: 0, paddingBottom: 0, minHeight: '58vh' }}
     >
       <Transition in={visible || focused} timeout={0}>
         {({ visible, nodeRef }) => (

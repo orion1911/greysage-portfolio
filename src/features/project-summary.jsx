@@ -82,7 +82,7 @@ export function ProjectSummary({
           </span>
         </div>
         <Heading
-          level={3}
+          level={4}
           as="h2"
           className={styles.title}
           data-visible={visible}
@@ -104,89 +104,11 @@ export function ProjectSummary({
 
   function renderImage(visible) {
     return (
-      <Transition in={sectionVisible || focused}>
-        {({ visible }) => (
-          <>
-            {visible && <img src="./static/baggy-mud.jpeg" alt="" height="500" className={styles.img} data-visible={visible} />}
-          </>
-        )}
-      </Transition>
-    );
-  }
-
-  function renderPreview(visible) {
-    return (
-      <div className={styles.preview}>
-        {model.type === 'laptop' && (
-          <>
-            {renderKatakana('laptop', visible)}
-            <div className={styles.model} data-device="laptop">
-              {!modelLoaded && (
-                <Loader center className={styles.loader} data-visible={visible} />
-              )}
-              {isHydrated && visible && (
-                <Suspense>
-                  <Model
-                    alt={model.alt}
-                    cameraPosition={{ x: 0, y: 0, z: 8 }}
-                    showDelay={700}
-                    onLoad={handleModelLoad}
-                    show={visible}
-                    models={[
-                      {
-                        ...deviceModels.laptop,
-                        texture: {
-                          ...model.textures[0],
-                          sizes: laptopSizes,
-                        },
-                      },
-                    ]}
-                  />
-                </Suspense>
-              )}
-            </div>
-          </>
-        )}
-        {model.type === 'phone' && (
-          <>
-            {renderKatakana('phone', visible)}
-            <div className={styles.model} data-device="phone">
-              {!modelLoaded && (
-                <Loader center className={styles.loader} data-visible={visible} />
-              )}
-              {isHydrated && visible && (
-                <Suspense>
-                  <Model
-                    alt={model.alt}
-                    cameraPosition={{ x: 0, y: 0, z: 11.5 }}
-                    showDelay={300}
-                    onLoad={handleModelLoad}
-                    show={visible}
-                    models={[
-                      {
-                        ...deviceModels.phone,
-                        position: { x: -0.6, y: 1.1, z: 0 },
-                        texture: {
-                          ...model.textures[0],
-                          sizes: phoneSizes,
-                        },
-                      },
-                      {
-                        ...deviceModels.phone,
-                        position: { x: 0.6, y: -0.5, z: 0.3 },
-                        texture: {
-                          ...model.textures[1],
-                          sizes: phoneSizes,
-                        },
-                      },
-                    ]}
-                  />
-                </Suspense>
-              )}
-            </div>
-          </>
-        )}
-      </div>
+          <div className={styles.title} data-visible={visible}>
+            {isHydrated && visible && (
+              <img src="/assets/images/baggy-mud.jpeg" alt="" height="500" />
+            )}
+          </div>
     );
   }
 
