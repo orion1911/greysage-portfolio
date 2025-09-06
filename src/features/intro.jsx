@@ -92,11 +92,12 @@ export function Intro({ id, sectionRef, scrollIndicatorHidden, ...rest }) {
                   <span className={styles.line} data-status={status} />
                 </span>
                 <div className={styles.row}>
+                  <AnimatePresence initial={false}>
                   {disciplines.map(item => (
                     <Transition
                       unmount
                       in={item === currentDiscipline}
-                      timeout={{ enter: 3000, exit: 2000 }}
+                      timeout={{ enter: 3000, exit: 3000 }}
                       key={item}
                     >
                       {({ status, nodeRef }) => (
@@ -113,6 +114,7 @@ export function Intro({ id, sectionRef, scrollIndicatorHidden, ...rest }) {
                       )}
                     </Transition>
                   ))}
+                  </AnimatePresence>
                 </div>
               </Heading>
             </header>

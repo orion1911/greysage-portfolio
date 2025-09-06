@@ -188,7 +188,7 @@
 }
 
 .word.discipline {
-  /* white-space: nowrap; */
+  white-space: nowrap;
 
   @media (max-width: 696px) {
     font-size: var(--fontSizeH01);
