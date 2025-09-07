@@ -11,32 +11,31 @@ import { Fragment, Suspense, lazy, useEffect, useState, useRef } from 'react';
 import { cssProps } from '../components/utils/style';
 import config from '../config.json';
 import { useHydrated } from '../hooks/useHydrated';
-// import './intro.module.css';
 import styles from './intro.module.css';
 import { AnimatePresence, motion } from 'framer-motion';
 import Sphere3D from './sphere3D';
 
-// const DisplacementSphere = lazy(() =>
-//   import('./displacement-sphere').then(module => ({ default: module.DisplacementSphere }))
-// );
-
 export function Intro({ id, sectionRef, scrollIndicatorHidden, ...rest }) {
   const { theme } = useTheme();
   const { disciplines } = config;
-  const [disciplineIndex, setDisciplineIndex] = useState(0);
+
+  // Simplified state management - single source of truth
+  const [currentIndex, setCurrentIndex] = useState(0);
+  const [animationKey, setAnimationKey] = useState(0);
+
   const prevTheme = usePrevious(theme);
   const introLabel = [disciplines.slice(0, -1).join(', '), disciplines.slice(-1)[0]].join(
     ', and '
   );
-  const currentDiscipline = disciplines.find((item, index) => index === disciplineIndex);
   const titleId = `${id}-title`;
   const scrollToHash = useScrollToHash();
   const isHydrated = useHydrated();
 
   useInterval(
     () => {
-      const index = (disciplineIndex + 1) % disciplines.length;
-      setDisciplineIndex(index);
+      setCurrentIndex(prev => (prev + 1) % disciplines.length);
+      // Force animation restart by changing key
+      setAnimationKey(prev => prev + 1);
     },
     5000,
     theme
@@ -44,7 +43,7 @@ export function Intro({ id, sectionRef, scrollIndicatorHidden, ...rest }) {
 
   useEffect(() => {
     if (prevTheme && prevTheme !== theme) {
-      setDisciplineIndex(0);
+      setCurrentIndex(0);
     }
   }, [theme, prevTheme]);
 
@@ -78,7 +77,6 @@ export function Intro({ id, sectionRef, scrollIndicatorHidden, ...rest }) {
               <Heading level={0} as="h2" className={styles.title}>
                 <VisuallyHidden className={styles.label}>
                   {`${config.role} + ${introLabel}`}
-                  {/* {config.role} + <Fragment style={{ fontSize: '7.2rem !important'}}>{introLabel}</Fragment> */}
                 </VisuallyHidden>
                 <span aria-hidden className={styles.row}>
                   <span
@@ -91,27 +89,17 @@ export function Intro({ id, sectionRef, scrollIndicatorHidden, ...rest }) {
                   <span className={styles.line} data-status={status} />
                 </span>
                 <div className={styles.row}>
-                  {disciplines.map(item => (
-                    <Transition
-                      unmount
-                      in={item === currentDiscipline}
-                      timeout={{ enter: 3000, exit: 2000 }}
-                      key={item}
+                  <div className={styles.disciplineContainer}>
+                    <span
+                      key={animationKey} // This forces complete re-mount
+                      className={styles.word}
+                      data-plus={true}
+                      data-status="animate" // Single animation state
+                      style={cssProps({ delay: tokens.base.durationL })}
                     >
-                      {({ status, nodeRef }) => (
-                        <span
-                          aria-hidden
-                          ref={nodeRef}
-                          className={styles.word}
-                          data-plus={true}
-                          data-status={status}
-                          style={cssProps({ delay: tokens.base.durationL })}
-                        >
-                          {item}
-                        </span>
-                      )}
-                    </Transition>
-                  ))}
+                      {disciplines[currentIndex]}
+                    </span>
+                  </div>
                 </div>
               </Heading>
             </header>
