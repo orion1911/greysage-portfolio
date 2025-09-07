@@ -149,7 +149,7 @@
   color: color-mix(in lab, var(--text) 0%, transparent);
   transition: opacity 0.5s ease var(--durationM);
   isolation: isolate;
-  will-change: opacity, transform; /* Optimize for mobile rendering */
+  will-change: opacity, transform, visibility; /* Enhanced optimization */
 
   &::after {
     content: '';

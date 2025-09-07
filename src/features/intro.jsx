@@ -49,9 +49,9 @@ export function Intro({ id, sectionRef, scrollIndicatorHidden, ...rest }) {
       setDisciplineIndex(0);
     }
     if (nodeRef.current) {
-      console.log('Discipline span opacity:', nodeRef.current.style.opacity);
+      console.log(Date.now(), 'Discipline span opacity:', nodeRef.current.style.opacity);
       const afterStyle = window.getComputedStyle(nodeRef.current, '::after');
-      console.log('After styles:', {
+      console.log(Date.now(), 'After styles:', {
         background: afterStyle.background,
         transform: afterStyle.transform,
       });
@@ -101,13 +101,13 @@ export function Intro({ id, sectionRef, scrollIndicatorHidden, ...rest }) {
                   <span className={styles.line} data-status={status} />
                 </span>
                 <div className={styles.row}>
-                  <AnimatePresence mode='wait' exitBeforeEnter onExitComplete={() => console.log('Exit complete')}>
+                  <AnimatePresence mode='wait' exitBeforeEnter onExitComplete={() => console.log(Date.now(), 'Exit complete')}>
                     <motion.span
                       key={currentDiscipline}
-                      initial={{ opacity: 0 }}
-                      animate={{ opacity: 1 }}
-                      exit={{ opacity: 0, transition: { duration: 1, delay: 0 } }} // Extended exit duration
-                      transition={{ duration: 0.75, delay: 0.75 }}
+                      initial={{ opacity: 0, visibility: 'hidden' }} // Prevent rendering until ready
+                      animate={{ opacity: 1, visibility: 'visible' }}
+                      exit={{ opacity: 0, transition: { duration: 1.5, delay: 0.5 } }} // Extended exit with delay
+                      transition={{ duration: 0.75, delay: 1 }} // Increased delay for mobile
                       aria-hidden
                       ref={nodeRef}
                       className={`${styles.word} ${styles.discipline}`}
