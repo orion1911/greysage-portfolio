@@ -33,8 +33,6 @@ export function Intro({ id, sectionRef, scrollIndicatorHidden, ...rest }) {
   const scrollToHash = useScrollToHash();
   const isHydrated = useHydrated();
 
-  const nodeRef = useRef();
-
   useInterval(
     () => {
       const index = (disciplineIndex + 1) % disciplines.length;
@@ -48,15 +46,7 @@ export function Intro({ id, sectionRef, scrollIndicatorHidden, ...rest }) {
     if (prevTheme && prevTheme !== theme) {
       setDisciplineIndex(0);
     }
-    if (nodeRef.current) {
-      console.log(Date.now(), 'Discipline span opacity:', nodeRef.current.style.opacity);
-      const afterStyle = window.getComputedStyle(nodeRef.current, '::after');
-      console.log(Date.now(), 'After styles:', {
-        background: afterStyle.background,
-        transform: afterStyle.transform,
-      });
-    }
-  }, [theme, prevTheme, disciplineIndex]);
+  }, [theme, prevTheme]);
 
   const handleScrollClick = event => {
     event.preventDefault();
@@ -101,22 +91,27 @@ export function Intro({ id, sectionRef, scrollIndicatorHidden, ...rest }) {
                   <span className={styles.line} data-status={status} />
                 </span>
                 <div className={styles.row}>
-                  <AnimatePresence mode='wait' exitBeforeEnter onExitComplete={() => console.log(Date.now(), 'Exit complete')}>
-                    <motion.span
-                      key={currentDiscipline}
-                      initial={{ opacity: 0, visibility: 'hidden' }} // Prevent rendering until ready
-                      animate={{ opacity: 1, visibility: 'visible' }}
-                      exit={{ opacity: 0, transition: { duration: 1.5, delay: 0.5 } }} // Extended exit with delay
-                      transition={{ duration: 0.75, delay: 1 }} // Increased delay for mobile
-                      aria-hidden
-                      ref={nodeRef}
-                      className={`${styles.word} ${styles.discipline}`}
-                      data-plus={true}
-                      style={cssProps({ delay: tokens.base.durationL })}
+                  {disciplines.map(item => (
+                    <Transition
+                      unmount
+                      in={item === currentDiscipline}
+                      timeout={{ enter: 3000, exit: 2000 }}
+                      key={item}
                     >
-                      {currentDiscipline}
-                    </motion.span>
-                  </AnimatePresence>
+                      {({ status, nodeRef }) => (
+                        <span
+                          aria-hidden
+                          ref={nodeRef}
+                          className={styles.word}
+                          data-plus={true}
+                          data-status={status}
+                          style={cssProps({ delay: tokens.base.durationL })}
+                        >
+                          {item}
+                        </span>
+                      )}
+                    </Transition>
+                  ))}
                 </div>
               </Heading>
             </header>
