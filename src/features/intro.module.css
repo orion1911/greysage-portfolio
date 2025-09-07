@@ -127,8 +127,8 @@
     color: color-mix(in lab, var(--text) 0%, transparent);
   }
 
-  60% {
-    color: var(--textTitle);
+  51% {
+    color: color-mix(in lab, var(--text) 0%, transparent);
   }
 
   100% {
@@ -202,14 +202,18 @@
 
 .word.discipline {
   white-space: nowrap;
+  animation-name: introTextReveal;
+  animation-delay: var(--delay, 0s);
 
+  @media (prefers-reduced-motion: no-preference) {
     &::after {
-        animation-name: reveal;
-        animation-duration: 1.5s;
-        /* animation-delay: var(--delay); */
-        animation-fill-mode: forwards;
-        animation-timing-function: var(--bezierFastoutSlowin);
-      }
+      animation-name: reveal;
+      animation-duration: 1.5s;
+      animation-delay: var(--delay, 0s);
+      animation-fill-mode: forwards;
+      animation-timing-function: var(--bezierFastoutSlowin);
+    }
+  }
 
   @media (max-width: 696px) {
     font-size: var(--fontSizeH01);

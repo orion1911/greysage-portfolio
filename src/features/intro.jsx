@@ -20,7 +20,6 @@ import Sphere3D from './sphere3D';
 //   import('./displacement-sphere').then(module => ({ default: module.DisplacementSphere }))
 // );
 
-
 export function Intro({ id, sectionRef, scrollIndicatorHidden, ...rest }) {
   const { theme } = useTheme();
   const { disciplines } = config;
@@ -100,13 +99,11 @@ export function Intro({ id, sectionRef, scrollIndicatorHidden, ...rest }) {
                       initial={{ opacity: 0 }}
                       animate={{ opacity: 1 }}
                       exit={{ opacity: 0 }}
-                      // transition={{ duration: 2, delay: 0.7 }}
-                      transition={{ delay: 0.6 }}
+                      transition={{ duration: 0.6 }}
                       aria-hidden
                       ref={nodeRef}
                       className={`${styles.word} ${styles.discipline}`}
                       data-plus={true}
-                      data-status={status}
                       style={cssProps({ delay: tokens.base.durationL })}
                     >
                       {currentDiscipline}
