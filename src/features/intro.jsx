@@ -101,13 +101,13 @@ export function Intro({ id, sectionRef, scrollIndicatorHidden, ...rest }) {
                   <span className={styles.line} data-status={status} />
                 </span>
                 <div className={styles.row}>
-                  <AnimatePresence mode='wait' onExitComplete={() => console.log('Exit complete')}>
+                  <AnimatePresence mode='wait' exitBeforeEnter onExitComplete={() => console.log('Exit complete')}>
                     <motion.span
                       key={currentDiscipline}
                       initial={{ opacity: 0 }}
-                      animate={{ opacity: 1 }} // Allow opacity to change to 1
-                      exit={{ opacity: 0 }}
-                      transition={{ duration: 0.75, delay: 0.75 }} // Sync with reveal delay
+                      animate={{ opacity: 1 }}
+                      exit={{ opacity: 0, transition: { duration: 1, delay: 0 } }} // Extended exit duration
+                      transition={{ duration: 0.75, delay: 0.75 }}
                       aria-hidden
                       ref={nodeRef}
                       className={`${styles.word} ${styles.discipline}`}
