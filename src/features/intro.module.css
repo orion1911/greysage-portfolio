@@ -127,7 +127,7 @@
     color: color-mix(in lab, var(--text) 0%, transparent);
   }
 
-  51% {
+  75% { /* Delay text visibility until reveal nears completion */
     color: color-mix(in lab, var(--text) 0%, transparent);
   }
 
@@ -143,7 +143,7 @@
   align-items: center;
   line-height: 1;
   animation-duration: 1.5s;
-  animation-delay: var(--delay);
+  animation-delay: var(--delay, 0s);
   animation-fill-mode: forwards;
   animation-timing-function: var(--bezierFastoutSlowin);
   color: color-mix(in lab, var(--text) 0%, transparent);
@@ -153,16 +153,16 @@
   &::after {
     content: '';
     background: var(--accent);
-    animation-duration: 1.5s;
-    animation-delay: var(--delay);
-    animation-fill-mode: forwards;
-    animation-timing-function: var(--bezierFastoutSlowin);
     transform-origin: left;
     transform: scale3d(0, 1, 1);
     position: absolute;
     inset: 0 -0.02em 0 0;
     z-index: var(--zIndex1);
     will-change: transform;
+    animation-duration: 1.5s;
+    animation-delay: var(--delay, 0s);
+    animation-fill-mode: forwards;
+    animation-timing-function: var(--bezierFastoutSlowin);
   }
 
   &[data-plus='true']::before {
@@ -203,15 +203,10 @@
 .word.discipline {
   white-space: nowrap;
   animation-name: introTextReveal;
-  animation-delay: var(--delay, 0s);
 
   @media (prefers-reduced-motion: no-preference) {
     &::after {
       animation-name: reveal;
-      animation-duration: 1.5s;
-      animation-delay: var(--delay, 0s);
-      animation-fill-mode: forwards;
-      animation-timing-function: var(--bezierFastoutSlowin);
     }
   }
 
