@@ -13,7 +13,7 @@ import config from '../config.json';
 import { useHydrated } from '../hooks/useHydrated';
 // import './intro.module.css';
 import styles from './intro.module.css';
-import { AnimatePresence } from 'framer-motion';
+import { AnimatePresence, motion } from 'framer-motion';
 import Sphere3D from './sphere3D';
 
 // const DisplacementSphere = lazy(() =>
@@ -33,6 +33,8 @@ export function Intro({ id, sectionRef, scrollIndicatorHidden, ...rest }) {
   const titleId = `${id}-title`;
   const scrollToHash = useScrollToHash();
   const isHydrated = useHydrated();
+
+  const nodeRef = useRef();
 
   useInterval(
     () => {
@@ -92,28 +94,23 @@ export function Intro({ id, sectionRef, scrollIndicatorHidden, ...rest }) {
                   <span className={styles.line} data-status={status} />
                 </span>
                 <div className={styles.row}>
-                  <AnimatePresence initial={false}>
-                  {disciplines.map(item => (
-                    <Transition
-                      unmount
-                      in={item === currentDiscipline}
-                      timeout={{ enter: 3000, exit: 3000 }}
-                      key={item}
+                  <AnimatePresence mode='wait'>
+                    <motion.span
+                      key={currentDiscipline}
+                      initial={{ opacity: 0 }}
+                      animate={{ opacity: 1 }}
+                      exit={{ opacity: 0 }}
+                      // transition={{ duration: 2, delay: 0.7 }}
+                      transition={{ delay: 0.6 }}
+                      aria-hidden
+                      ref={nodeRef}
+                      className={`${styles.word} ${styles.discipline}`}
+                      data-plus={true}
+                      data-status={status}
+                      style={cssProps({ delay: tokens.base.durationL })}
                     >
-                      {({ status, nodeRef }) => (
-                        <span
-                          aria-hidden
-                          ref={nodeRef}
-                            className={`${styles.word} ${styles.discipline}`}
-                          data-plus={true}
-                          data-status={status}
-                          style={cssProps({ delay: tokens.base.durationL })}
-                        >
-                          {item}
-                        </span>
-                      )}
-                    </Transition>
-                  ))}
+                      {currentDiscipline}
+                    </motion.span>
                   </AnimatePresence>
                 </div>
               </Heading>

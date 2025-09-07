@@ -203,6 +203,14 @@
 .word.discipline {
   white-space: nowrap;
 
+    &::after {
+        animation-name: reveal;
+        animation-duration: 1.5s;
+        /* animation-delay: var(--delay); */
+        animation-fill-mode: forwards;
+        animation-timing-function: var(--bezierFastoutSlowin);
+      }
+
   @media (max-width: 696px) {
     font-size: var(--fontSizeH01);
   }
@@ -215,7 +223,6 @@
     font-size: var(--fontSizeH1);
   }
 }
-
 
 @keyframes introLine {
   0% {
