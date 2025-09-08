@@ -5,6 +5,7 @@ const baseTokens = {
   black: 'oklch(0% 0 0)',
   white: 'oklch(100% 0 0)',
   bezierFastoutSlowin: 'cubic-bezier(0.4, 0.0, 0.2, 1)',
+  bezierEaseinOut: 'cubic-bezier(0.65, 0, 0.35, 1)',
   durationXS: '200ms',
   durationS: '300ms',
   durationM: '400ms',
