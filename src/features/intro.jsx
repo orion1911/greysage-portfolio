@@ -95,7 +95,7 @@ export function Intro({ id, sectionRef, scrollIndicatorHidden, ...rest }) {
                       className={`${styles.word}  ${styles.discipline}`}
                       data-plus={true}
                       data-status="animate"
-                      style={cssProps({ delay: tokens.base.durationL }, { marginTop: '-13px' })}
+                      style={cssProps({ delay: tokens.base.durationL }, { marginTop: '-11px' })}
                     >
                       {disciplines[currentIndex]}
                     </span>

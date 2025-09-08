@@ -33,9 +33,6 @@ body {
   outline: none;
 }
 
-
-
-
 .intro {
   height: 100vh;
   display: flex;
@@ -164,19 +161,24 @@ body {
   }
 }
 
-
-
-@keyframes disciplineFadeReveal {
+@keyframes disciplineFadeInOut {
   0% {
     opacity: 0;
-    /* transform: translateY(10px); */
+    /* transform: translateX(10px); */
+  }
+  15% {
+    opacity: 1;
+    /* transform: translateX(0); */
+  }
+  85% {
+    opacity: 1;
+    /* transform: translateX(0); */
   }
   100% {
-    opacity: 1;
-    /* transform: translateY(0); */
+    opacity: 0;
+    /* transform: translateX(5px); */
   }
 }
-
 
 .disciplineContainer {
   position: relative;
@@ -185,26 +187,22 @@ body {
   min-width: 140px;
 }
 
-
-
 .word[data-status='animate'] {
   /* Start invisible */
   opacity: 0;
   transform: translateY(10px);
   
-  /* Then animate to visible with both fade and reveal */
+  /* Animate with fade in/out cycle and reveal effect */
   animation: 
-    disciplineFadeReveal 1s ease-in-out forwards,
+    disciplineFadeInOut 5s ease-in-out infinite,
     introTextReveal 1.5s var(--bezierEaseinOut) forwards;
-  animation-delay: 0.5s, var(--delay);
+  animation-delay: 0s, var(--delay);
   
   &::after {
     animation: reveal 1.5s var(--bezierEaseinOut) forwards;
-    animation-delay: 0.4s, var(--delay);
+    animation-delay: var(--delay);
   }
 }
-
-
 
 .word {
   position: relative;
@@ -216,7 +214,7 @@ body {
   animation-delay: var(--delay);
   animation-fill-mode: forwards;
   animation-timing-function: var(--bezierFastoutSlowin);
-  color: color-mix(in lab, var(--text) 0%, transparent); /* Keep this for the reveal effect */
+  color: color-mix(in lab, var(--text) 0%, transparent);
   transition: opacity 0.5s ease var(--durationM);
   isolation: isolate;
 
@@ -260,14 +258,6 @@ body {
       transform-origin: right;
     }
   }
-
-  /* &[data-status='exiting'] {
-    color: var(--textTitle);
-    opacity: 0;
-    position: absolute;
-    top: 0;
-    z-index: var(--zIndex0);
-  } */
 }
 
 .word.discipline {
@@ -285,7 +275,6 @@ body {
     font-size: var(--fontSizeH1);
   }
 }
-
 
 @keyframes fade-in {
   0% {
