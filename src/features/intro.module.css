@@ -171,9 +171,22 @@ body {
     opacity: 0;
     transform: translateY(10px);
   }
+
   100% {
     opacity: 1;
     transform: translateY(0);
+  }
+}
+
+@keyframes disciplineFadeOut {
+  100% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+
+  0% {
+    opacity: 0;
+    transform: translateY(10px);
   }
 }
 
@@ -191,13 +204,13 @@ body {
   /* Start invisible */
   opacity: 0;
   transform: translateY(10px);
-  
+
   /* Then animate to visible with both fade and reveal */
-  animation: 
+  animation:
     disciplineFadeReveal 0.8s ease forwards,
     introTextReveal 1.5s var(--bezierFastoutSlowin) forwards;
   animation-delay: 0.1s, var(--delay);
-  
+
   &::after {
     animation: reveal 1.5s var(--bezierFastoutSlowin) forwards;
     animation-delay: var(--delay);
@@ -216,7 +229,8 @@ body {
   animation-delay: var(--delay);
   animation-fill-mode: forwards;
   animation-timing-function: var(--bezierFastoutSlowin);
-  color: color-mix(in lab, var(--text) 0%, transparent); /* Keep this for the reveal effect */
+  color: color-mix(in lab, var(--text) 0%, transparent);
+  /* Keep this for the reveal effect */
   transition: opacity 0.5s ease var(--durationM);
   isolation: isolate;
 
@@ -268,6 +282,22 @@ body {
     top: 0;
     z-index: var(--zIndex0);
   } */
+}
+
+.word.discipline {
+  word-wrap: none;
+
+  @media (max-width: 696px) {
+    font-size: var(--fontSizeH01);
+  }
+
+  @media (max-width: 412px) {
+    font-size: var(--fontSizeH1);
+  }
+
+  @media (max-width: 400px) {
+    font-size: var(--fontSizeH1);
+  }
 }
 
 

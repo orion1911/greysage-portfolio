@@ -92,7 +92,7 @@ export function Intro({ id, sectionRef, scrollIndicatorHidden, ...rest }) {
                   <div className={styles.disciplineContainer}>
                     <span
                       key={animationKey} // This forces complete re-mount
-                      className={styles.word}
+                      className={`${styles.word}  ${styles.discipline}`}
                       data-plus={true}
                       data-status="animate" // Single animation state
                       style={cssProps({ delay: tokens.base.durationL })}
