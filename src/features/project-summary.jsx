@@ -102,11 +102,11 @@ export function ProjectSummary({
 
   function renderImage(visible) {
     return (
-          <div className={styles.title} data-visible={visible}>
-            {isHydrated && visible && (
-              <img src="/assets/images/baggy-mud.jpeg" alt="" height="500" />
+      <div className={styles.title} data-visible={visible}>
+        {isHydrated && visible && (
+          <img src="/assets/images/baggy-mud.jpeg" alt="" height="500" />
         )}
-          </div>
+      </div>
     );
   }
 
