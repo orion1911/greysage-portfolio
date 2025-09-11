@@ -1,4 +1,5 @@
-###   G R E Y S A G E   Company Profile
+### G R E Y S A G E
+# Company Profile
 
 GREYSAGE is a dynamic manufacturing powerhouse based in the vibrant heart of Mumbai, India, 
 specializing in cutting-edge streetwear and urban apparel designed to captivate the youth market.

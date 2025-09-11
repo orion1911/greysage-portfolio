@@ -458,7 +458,16 @@ class DisplacementSphere {
     cancelAnimationFrame(this.animationId);
     this.geometry.dispose();
     this.material.dispose();
-    this.scene.dispose();
+    // this.scene.dispose();
+    this.scene && this.scene.children.length > 0 && this.scene.children.forEach(object => {
+        if (object.isMesh) {
+            object.geometry.dispose();
+            object.material.dispose();
+            // If the material has textures, dispose of them as well
+            if (object.material.map) object.material.map.dispose();
+        }
+        // Dispose of other disposable objects like Lights, Cameras, etc. if needed
+    });
     this.renderer.dispose();
     this.container.removeChild(this.canvas);
   }
