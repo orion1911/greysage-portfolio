@@ -119,7 +119,7 @@ export function Intro({ id, sectionRef, scrollIndicatorHidden, ...rest }) {
               data-hidden={scrollIndicatorHidden}
               onClick={handleScrollClick}
             >
-              <VisuallyHidden>Scroll to projects</VisuallyHidden>
+              <VisuallyHidden>Scroll</VisuallyHidden>
               <svg
                 aria-hidden
                 stroke="currentColor"
