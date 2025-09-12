@@ -145,11 +145,27 @@ body {
 
 @keyframes introTextReveal {
   0% {
-    color: color-mix(in lab, var(--text) 0%, transparent);
+    color: transparent;
   }
 
-  50% {
-    color: color-mix(in lab, var(--text) 0%, transparent);
+  25% {
+    color: transparent;
+  }
+
+  35% {
+    color: var(--textTitle);
+  }
+
+  40% {
+    color: var(--textTitle);
+  }
+
+  45% {
+    color: var(--textTitle);
+  }
+
+  55% {
+    color: var(--textTitle);
   }
 
   60% {
@@ -190,17 +206,17 @@ body {
 .word[data-status='animate'] {
   /* Start invisible */
   opacity: 0;
-  transform: translateY(10px);
+  /* transform: translateY(10px); */
   
   /* Animate with fade in/out cycle and reveal effect */
   animation: 
-    disciplineFadeInOut 5s ease-in-out infinite,
-    introTextReveal 1.5s var(--bezierEaseinOut) forwards;
-  animation-delay: 0s, var(--delay);
+    disciplineFadeInOut 5s ease-in-out,
+    introTextReveal 3s var(--bezierEaseinOut) forwards;
+  animation-delay: 0.4, var(--delay);
   
   &::after {
     animation: reveal 1.5s var(--bezierEaseinOut) forwards;
-    animation-delay: var(--delay);
+    animation-delay: 0.4, var(--delay);
   }
 }
 
@@ -209,7 +225,7 @@ body {
   display: flex;
   flex-shrink: 0;
   align-items: center;
-  line-height: 1;
+  /* line-height: 1; */
   animation-duration: 1.5s;
   animation-delay: var(--delay);
   animation-fill-mode: forwards;
@@ -268,11 +284,11 @@ body {
   }
 
   @media (max-width: 412px) {
-    font-size: var(--fontSizeH1);
+    font-size: var(--fontSizeH01);
   }
 
   @media (max-width: 400px) {
-    font-size: var(--fontSizeH1);
+    font-size: var(--fontSizeH01);
   }
 }
 
