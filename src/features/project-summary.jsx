@@ -124,7 +124,7 @@ export function ProjectSummary({
       tabIndex={-1}
       {...rest}
     >
-      <div className={styles.content} style={{ gridTemplateColumns: index !== 1 && 'auto' }}>
+      <div className={styles.content} style={{ gridTemplateColumns: index !== 1 && 'auto', marginTop: 'auto' }}>
         <Transition in={sectionVisible || focused}>
           {({ visible }) => (
             <>
