@@ -5,6 +5,7 @@ import { Navbar } from './components/navbar/navbar';
 import styles from './root.module.css';
 import './reset.module.css';
 import './global.module.css';
+import { Contact } from './features/contact';
 const Home = lazy(() => import('./features/home'));
 
 const Root = () => {
@@ -56,6 +57,7 @@ function App() {
           <Routes>
               <Route element={<Root />}>
                 <Route path="/" index element={<Home />} />
+                <Route path="/contact" index element={<Contact />} />
               </Route>
           </Routes>
         </BrowserRouter>

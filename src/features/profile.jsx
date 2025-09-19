@@ -2,6 +2,7 @@ import { DecoderText } from '../components/decoder-text';
 import { Heading } from '../components/heading';
 import { Section } from '../components/section';
 import { Text } from '../components/text';
+import { Button } from '../components/button';
 import { Transition } from '../components/transition';
 import { Fragment, useState } from 'react';
 import styles from './profile.module.css';
@@ -40,7 +41,7 @@ export const Profile = ({ id, visible, sectionRef }) => {
           <div className={styles.content} ref={nodeRef} style={{ gridTemplateColumns: 'auto', minHeight: '50vh !important'}}>
             <div className={styles.column} style={{ marginBottom: 0 }}>
               <ProfileText visible={visible} titleId={titleId} />
-              {/* <Button
+              <Button
                 secondary
                 className={styles.button}
                 data-visible={visible}
@@ -48,7 +49,7 @@ export const Profile = ({ id, visible, sectionRef }) => {
                 icon="send"
               >
                 Send us a message
-              </Button> */}
+              </Button>
             </div>
           </div>
         )}
