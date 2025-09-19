@@ -1,0 +1,1 @@
+export { MonogramContact } from './monogramContact';

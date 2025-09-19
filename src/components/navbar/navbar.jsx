@@ -1,5 +1,6 @@
 import { Icon } from '../icon';
 import { Monogram } from '../monogram';
+import { Button } from '../button'
 import { useTheme } from '../theme-provider';
 import { tokens } from '../theme-provider/theme';
 import { Transition } from '../transition';
@@ -12,6 +13,7 @@ import { ThemeToggle } from './theme-toggle';
 import { navLinks, socialLinks } from './nav-data';
 import config from '../../config.json';
 import styles from './navbar.module.css';
+import { MonogramContact } from '../monogramContact';
 
 export const Navbar = () => {
   const [current, setCurrent] = useState();
@@ -140,18 +142,30 @@ export const Navbar = () => {
   };
 
   return (
-    <header className={styles.navbar} ref={headerRef} style={{ top: '24px'}}>
+    <header className={styles.navbar} ref={headerRef} style={{ top: '24px' }}>
       <RouterLink
         unstable_viewTransition
         prefetch="intent"
         to={location.pathname === '/' ? '/#intro' : '/'}
         data-navbar-item
         className={styles.logo + ' ' + styles.glassEffect}
-        style={{ paddingBottom: '8px'}}
+        style={{ paddingBottom: '8px' }}
         aria-label={`${config.name}, ${config.role}`}
         onClick={handleMobileNavClick}
       >
         <Monogram highlight />
+      </RouterLink>
+      <RouterLink
+        unstable_viewTransition
+        prefetch="intent"
+        to='/contact'
+        data-navbar-item
+        className={styles.logo + ' ' + styles.glassEffect}
+        style={{ paddingBottom: '8px' }}
+        aria-label={`${config.name}, ${config.role}`}
+        onClick={handleMobileNavClick}
+      >
+        <MonogramContact highlight />
       </RouterLink>
       {/* <NavToggle onClick={() => setMenuOpen(!menuOpen)} menuOpen={menuOpen} /> */}
       <nav className={styles.nav}>
