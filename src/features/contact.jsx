@@ -79,7 +79,7 @@ export const Contact = () => {
         }),
       });
 
-      if (response && response.message) {
+      if (response.ok) {
         setFormState({ isSubmitting: false, errors: null, success: true });
       } else {
         setFormState({
