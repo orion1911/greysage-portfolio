@@ -13,7 +13,7 @@ const ProfileText = ({ visible, titleId }) => (
       <DecoderText text="Why Partner with GREYSAGE?" start={visible} delay={500} />
     </Heading>
     <Text className={styles.description} data-visible={visible} size="l" as="p">
-      If your brand targets the energetic, trend-driven youth market, GREYSAGE is your ideal manufacturing ally. Since our inception in 2019
+      If your brand targets the energetic, trend-driven youth market, GREYSAGE is your ideal manufacturing ally. Since our inception in 2016
        as Allyz Jeans, we've honed our craft to deliver apparel that drives engagement and loyalty among young customers. 
        We don't just produce clothing—we craft cultural statements.
     </Text>
