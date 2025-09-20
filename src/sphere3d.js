@@ -427,8 +427,8 @@ class DisplacementSphere {
     }
 
     this.sphere.rotation.z += 0.001;
-    this.rotationX += (this.targetRotationX - this.rotationX) * 0.1;
-    this.rotationY += (this.targetRotationY - this.rotationY) * 0.1;
+    this.rotationX += (this.targetRotationX - this.rotationX) * 0.05;
+    this.rotationY += (this.targetRotationY - this.rotationY) * 0.05;
     this.sphere.rotation.x = this.rotationX;
     this.sphere.rotation.y = this.rotationY;
 
