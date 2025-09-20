@@ -19,17 +19,17 @@ export const MonogramContact = forwardRef(({ highlight, className, ...props }, r
       className={classes(styles.customShape, className)}
       width="40"
       height="40"
-      viewBox="0 0 130 100"
+      viewBox="-12 0 150 100"
       ref={ref}
       {...props}
     >
       <style type="text/css">
         {`
-          .st0 { fill: #EA4335; }
-          .st1 { fill: #C5221F; }
-          .st2 { fill: #FBBC04; }
-          .st3 { fill: #34A853; }
-          .st4 { fill: #769edfff; }
+          .st0 { fill: #d91d0cff; }
+          .st1 { fill: #12b5ecff; }
+          .st2 { fill: #cec924ff; }
+          .st3 { fill: #7d81e4ff; }
+          .st4 { fill: #88d10bff; }
           .highlight { fill: oklch(84.42% 0.19 202.24); opacity: 0.7; stroke: #000000; stroke-width: 2; }
         `}
       </style>
