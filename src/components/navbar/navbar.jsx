@@ -142,7 +142,7 @@ export const Navbar = () => {
   };
 
   return (
-    <header className={styles.navbar} ref={headerRef} style={{ top: '24px' }}>
+    <header className={styles.navbar} ref={headerRef} style={{ top: '18px', right: '18px' }}>
       <RouterLink
         unstable_viewTransition
         prefetch="intent"
