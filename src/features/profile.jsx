@@ -9,8 +9,8 @@ import styles from './profile.module.css';
 
 const ProfileText = ({ visible, titleId }) => (
   <Fragment>
-    <Heading className={styles.title} data-visible={visible} level={4} id={titleId}>
-      <DecoderText text="Why Partner with GREYSAGE?" start={visible} delay={500} />
+    <Heading className={styles.title} data-visible={visible} level={3} id={titleId}>
+      <DecoderText text="Why partner with GREYSAGE?" start={visible} delay={500} />
     </Heading>
     <Text className={styles.description} data-visible={visible} size="l" as="p">
       If your brand targets the energetic, trend-driven youth market, GREYSAGE is your ideal manufacturing ally. Since our inception in 2016

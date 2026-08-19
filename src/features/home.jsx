@@ -46,7 +46,6 @@ const Home = () => {
   const details = useRef();
 
   useEffect(() => {
-    // const sections = [intro, sectionOne, sectionTwo, sectionThree, details];
     const sections = [intro, sectionOne, sectionTwo, sectionThree, sectionFour];
 
     const sectionObserver = new IntersectionObserver(
@@ -55,8 +54,9 @@ const Home = () => {
           if (entry.isIntersecting) {
             const section = entry.target;
             observer.unobserve(section);
-            if (visibleSections.includes(section)) return;
-            setVisibleSections(prevSections => [...prevSections, section]);
+            setVisibleSections(prev =>
+              prev.includes(section) ? prev : [...prev, section]
+            );
           }
         });
       },
@@ -71,16 +71,16 @@ const Home = () => {
     );
 
     sections.forEach(section => {
-      sectionObserver.observe(section.current);
+      if (section.current) sectionObserver.observe(section.current);
     });
 
-    indicatorObserver.observe(intro.current);
+    if (intro.current) indicatorObserver.observe(intro.current);
 
     return () => {
       sectionObserver.disconnect();
       indicatorObserver.disconnect();
     };
-  }, [visibleSections]);
+  }, []);
 
   return (
     <div className={styles.home}>
@@ -95,15 +95,23 @@ const Home = () => {
         visible={visibleSections.includes(sectionOne.current)}
         index={1}
         section="Overview"
-        title="Designing the future of denim wear"
-        // description="Design and manufacture denim wear for brands and retailers around the world"
-        description="GREYSAGE is a dynamic manufacturing powerhouse based in the vibrant heart of Mumbai, India, 
-        specializing in cutting-edge streetwear and urban apparel designed to captivate the youth market. Founded in the year 2016 under the 
-        label Allyz Jeans with a passion for blending contemporary trends with timeless quality, we empower brands worldwide to deliver fresh, 
-        trendsetting collections that resonate with young, style-savvy consumers. 
-        
-        Our expertise lies in creating garments that embody the spirit of modern urban life—bold, versatile, and forward-thinking. 
-        Helping our clients stay ahead in the fast-paced world of high street urban fashion."
+        title={<>Designing the future of <em>denim</em> wear</>}
+        descriptionLead={
+          <p>
+            GREYSAGE is a Mumbai-based manufacturing house specializing in
+            streetwear and urban apparel for the youth market. Founded in
+            2016 under the label Allyz Jeans, we blend contemporary trends
+            with timeless quality — empowering brands worldwide to deliver
+            fresh, trend-forward collections.
+          </p>
+        }
+        description={
+          <p>
+            Our work captures the spirit of modern urban life — bold,
+            versatile, and forward-thinking — helping clients stay ahead in
+            the fast pace of high-street fashion.
+          </p>
+        }
         // buttonText=""
         // buttonLink=""
         // model={{
@@ -123,17 +131,33 @@ const Home = () => {
         sectionRef={sectionTwo}
         visible={visibleSections.includes(sectionTwo.current)}
         index={2}
-        // style={{ height: '72vh' }}
         section="Our Products"
-        title="At GREYSAGE, we excel in crafting premium men's bottoms that define streetwear, urban vibes, and future high street trends."
-        description={<p>Our core offerings include:
-          <br /> - Denim Jeans (Prime Focus): From wide-leg and baggy jeans to straight-fit and MOM-fit styles, our jeans feature innovative washes, durable fabrics, and trend-forward details like unique pocket designs and eco-conscious materials. Our best-sellers include wide-leg and baggy jeans, catering to the bold, expressive tastes of young consumers.
-          <br /> - Cargo Pants: Functional and fashionable, with multiple utility pockets, adjustable fits, and fabrics that balance comfort with street-ready aesthetics.
-          <br /> - Shorts: Versatile and stylish, designed for casual urban looks with a focus on modern cuts and breathable materials.
-          <br /> - Trousers and Linen Pants: Sleek, tailored options that merge sophistication with relaxed, youthful energy.
-          <br /> - Track Pants: Comfort-driven designs with sporty, urban flair, perfect for the active, trend-conscious demographic.
-          <br /> - Additional Urban Essentials: We also produce complementary items like hoodies, joggers, and graphic tees, all aligned with the latest global fashion trends to keep your brand's lineup fresh.
-          <br /><br /> Our designs are inspired by youth culture, incorporating sustainable dyes, tech-infused fabrics, and customizable features to appeal to Gen Z and millennial shoppers who demand authenticity and innovation.</p>}
+        title={<>Premium men's bottoms, made for <em>streetwear</em>.</>}
+        descriptionLead={
+          <p>
+            We excel in crafting premium men's bottoms that define streetwear,
+            urban vibes, and future high-street trends. Denim is our prime
+            focus — wide-leg, baggy, straight, and MOM fits with innovative
+            washes, durable fabrics, and trend-forward details.
+          </p>
+        }
+        description={
+          <>
+            <ul>
+              <li><strong>Denim Jeans</strong> — wide-leg &amp; baggy bestsellers, MOM and straight fits, signature washes</li>
+              <li><strong>Cargo Pants</strong> — utility pockets, adjustable fits, street-ready aesthetics</li>
+              <li><strong>Shorts</strong> — modern cuts in breathable, casual urban fabrics</li>
+              <li><strong>Trousers &amp; Linen</strong> — sleek tailoring with relaxed, youthful energy</li>
+              <li><strong>Track Pants</strong> — comfort-driven, sporty urban flair</li>
+              <li><strong>Urban Essentials</strong> — hoodies, joggers, and graphic tees</li>
+            </ul>
+            <p>
+              Designs are inspired by youth culture and built with sustainable
+              dyes, tech-infused fabrics, and customizable details — for Gen Z
+              and millennial shoppers who demand authenticity.
+            </p>
+          </>
+        }
         // buttonText=""
         // buttonLink=""
         // model={{
@@ -156,16 +180,28 @@ const Home = () => {
         sectionRef={sectionThree}
         visible={visibleSections.includes(sectionThree.current)}
         index={3}
-        // style={{ height: '72vh' }}
-        section="Services We Offer"
-        title="GREYSAGE provides end-to-end solutions tailored for brands targeting young audiences, ensuring seamless production and distribution"
-        description={<p>
-          <br /> - Manufacturing: State-of-the-art facilities equipped with advanced machinery for high-volume, precision production.
-          <br /> - White Labeling: Customize our premium products with your branding, enabling quick launches without in-house design.
-          <br /> - Wholesale: Competitive bulk pricing for ready-to-sell inventory, ideal for retailers and e-commerce platforms catering to trend-conscious youth.
-          <br /> - FOB (Free on Board): Efficient shipping from our Mumbai port, streamlining logistics to deliver your products to global markets cost-effectively.
-          <br /><br /> - We offer flexibility with low MOQs for emerging brands and scalable options for established ones, maintaining lead times that align with seasonal trends.
-        </p>}
+        section="Services"
+        title={<>End-to-end <em>solutions</em> for brands.</>}
+        descriptionLead={
+          <p>
+            End-to-end solutions for brands targeting young audiences —
+            seamless production, branding, and distribution under one roof.
+          </p>
+        }
+        description={
+          <>
+            <ul>
+              <li><strong>Manufacturing</strong> — state-of-the-art facilities with advanced machinery for high-volume, precision production</li>
+              <li><strong>White Labeling</strong> — customize our premium products with your branding for quick launches</li>
+              <li><strong>Wholesale</strong> — competitive bulk pricing on ready-to-sell inventory for retailers and e-commerce</li>
+              <li><strong>FOB Shipping</strong> — efficient logistics from our Mumbai port, delivered cost-effectively to global markets</li>
+            </ul>
+            <p>
+              Flexible MOQs for emerging brands, scalable production for
+              established ones — with lead times built around seasonal trends.
+            </p>
+          </>
+        }
         // buttonText=""
         // buttonLink=""
         // model={{

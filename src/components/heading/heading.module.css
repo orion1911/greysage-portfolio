@@ -4,7 +4,7 @@
     color: var(--textTitle);
 
     &[data-level='0'] {
-      letter-spacing: -0.05em;
+      letter-spacing: -0.055em;
       font-size: var(--fontSizeH0);
     }
 
@@ -20,7 +20,8 @@
 
     &[data-level='3'] {
       font-size: var(--fontSizeH3);
-      letter-spacing: -0.02em;
+      letter-spacing: -0.025em;
+      line-height: 1.15;
     }
 
     &[data-level='4'] {
@@ -30,6 +31,13 @@
 
     &[data-level='5'] {
       font-size: var(--fontSizeH5);
+    }
+
+    & em {
+      font-family: var(--serifFontStack);
+      font-weight: 500;
+      letter-spacing: -0.02em;
+      color: var(--accent);
     }
 
     &[data-align='auto'] {

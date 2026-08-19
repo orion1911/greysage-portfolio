@@ -1,24 +1,21 @@
 .profile {
-  width: 100vw;
-  /* min-height: 100vh; */
-  /* margin-top: 60px; */
+  width: 100%;
+  margin-top: 120px;
   margin-bottom: 40px;
-  /* padding-top: 60px; */
+  padding-top: var(--spaceXL);
   padding-bottom: 40px;
   display: flex;
   justify-content: center;
 
   @media (max-width: 1040px) {
-    padding-top: var(--spaceL);;
-    padding-right: 80px;
-    padding-left: 160px;
+    padding-top: var(--spaceL);
     height: auto;
-    margin-top: 40px;
+    margin-top: var(--space4XL);
     margin-bottom: 20px;
   }
 
   @media (max-width: 696px) {
-    margin-top: 0;
+    margin-top: var(--space3XL);
     padding-top: var(--spaceL);
     overflow-x: hidden;
   }
@@ -57,8 +54,8 @@
 }
 
 .title {
-  white-space: nowrap;
   margin-bottom: var(--spaceL);
+  letter-spacing: -0.02em;
   opacity: 0;
   transition: opacity var(--durationXL) ease var(--durationM);
 

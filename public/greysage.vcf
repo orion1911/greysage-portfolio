@@ -1,0 +1,12 @@
+BEGIN:VCARD
+VERSION:3.0
+N:Khan;Saif;;;
+FN:Saif Khan (GREYSAGE)
+ORG:GREYSAGE
+TITLE:Clothing Manufacturer
+TEL;TYPE=CELL,VOICE:+919999999999
+EMAIL;TYPE=INTERNET,WORK:hello@greysage.com
+URL:https://greysageco.vercel.app
+ADR;TYPE=WORK:;;Street address;City;State;PIN;India
+NOTE:Clothing Manufacturer / Wholesaler / White labeling / FOB
+END:VCARD

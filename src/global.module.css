@@ -29,8 +29,9 @@
   }
 
   :global(:focus) {
-    outline: 4px solid var(--text);
+    outline: 2px solid var(--accent);
     outline-offset: 4px;
+    border-radius: 2px;
   }
 
   :global(:focus:not(:focus-visible)) {

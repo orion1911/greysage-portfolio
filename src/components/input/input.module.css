@@ -1,7 +1,7 @@
 .container {
-  --inputFontSize: calc((16 / 16) * 1rem);
-  --inputFocusColor: var(--primary);
-  --inputUnderlineColor: color-mix(in lab, var(--text) 20%, transparent);
+  --inputFontSize: calc((17 / 16) * 1rem);
+  --inputFocusColor: var(--accent);
+  --inputUnderlineColor: color-mix(in lab, var(--text) 18%, transparent);
 
   position: relative;
   display: flex;
@@ -70,12 +70,16 @@
 }
 
 .label {
-  color: color-mix(in lab, var(--text) 80%, transparent);
+  color: color-mix(in lab, var(--text) 60%, transparent);
   position: absolute;
   top: var(--spaceL);
   left: 0;
   display: block;
   cursor: text;
+  text-transform: uppercase;
+  letter-spacing: 0.18em;
+  font-size: calc((13 / 16) * 1rem);
+  font-weight: var(--fontWeightMedium);
   transform-origin: top left;
   transition: color var(--durationM) ease;
 

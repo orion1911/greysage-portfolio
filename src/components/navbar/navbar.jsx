@@ -14,6 +14,7 @@ import { navLinks, socialLinks } from './nav-data';
 import config from '../../config.json';
 import styles from './navbar.module.css';
 import { MonogramContact } from '../monogramContact';
+import { MonogramConnect } from '../monogramConnect';
 
 export const Navbar = () => {
   const [current, setCurrent] = useState();
@@ -166,6 +167,18 @@ export const Navbar = () => {
         onClick={handleMobileNavClick}
       >
         <MonogramContact highlight />
+      </RouterLink>
+      <RouterLink
+        unstable_viewTransition
+        prefetch="intent"
+        to='/connect'
+        data-navbar-item
+        className={styles.logo + ' ' + styles.glassEffect}
+        style={{ paddingBottom: '8px' }}
+        aria-label={`Connect with ${config.name}`}
+        onClick={handleMobileNavClick}
+      >
+        <MonogramConnect highlight />
       </RouterLink>
       {/* <NavToggle onClick={() => setMenuOpen(!menuOpen)} menuOpen={menuOpen} /> */}
       <nav className={styles.nav}>

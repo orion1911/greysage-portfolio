@@ -27,8 +27,35 @@
   }
 }
 
+.eyebrow {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--spaceS);
+  text-transform: uppercase;
+  letter-spacing: 0.36em;
+  font-size: calc((11 / 16) * 1rem);
+  font-weight: var(--fontWeightMedium);
+  color: var(--accent);
+  margin-bottom: var(--spaceL);
+  opacity: 0;
+  transition: opacity var(--durationL) var(--bezierFastoutSlowin);
+
+  &::before {
+    content: '';
+    width: 28px;
+    height: 1px;
+    background: currentColor;
+  }
+
+  &[data-status='entering'],
+  &[data-status='entered'] {
+    opacity: 1;
+  }
+}
+
 .title {
-  margin-bottom: var(--space2XL);
+  margin-bottom: var(--spaceL);
+  letter-spacing: -0.04em;
   transition-property: opacity;
   transition-timing-function: var(--bezierFastoutSlowin);
   transition-duration: var(--durationXL);

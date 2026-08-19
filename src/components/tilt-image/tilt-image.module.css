@@ -1,0 +1,94 @@
+.frame {
+  --rx: 0deg;
+  --ry: 0deg;
+  --mx: 50%;
+  --my: 50%;
+  --scale: 1;
+
+  position: relative;
+  width: 100%;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: var(--spaceS);
+}
+
+.inner {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 4 / 5;
+  overflow: hidden;
+  background: var(--surface);
+  perspective: 1000px;
+  cursor: pointer;
+  transform: rotateX(var(--rx)) rotateY(var(--ry)) scale(var(--scale));
+  transition: transform 400ms var(--bezierFastoutSlowin), box-shadow 400ms var(--bezierFastoutSlowin);
+  transform-style: preserve-3d;
+  will-change: transform;
+  box-shadow:
+    0 8px 20px -14px color-mix(in lab, var(--black) 30%, transparent),
+    0 24px 50px -30px color-mix(in lab, var(--black) 20%, transparent);
+
+  .frame[data-active='true'] & {
+    box-shadow:
+      0 14px 30px -16px color-mix(in lab, var(--black) 40%, transparent),
+      0 40px 80px -40px color-mix(in lab, var(--black) 28%, transparent);
+  }
+
+  @media (pointer: coarse) {
+    cursor: default;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    transform: none !important;
+  }
+}
+
+.image {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+  filter: saturate(0.96) contrast(1.03);
+  transition: filter 400ms var(--bezierFastoutSlowin);
+
+  .frame[data-active='true'] & {
+    filter: saturate(1.02) contrast(1.06);
+  }
+}
+
+.gloss {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background: radial-gradient(
+    240px circle at var(--mx) var(--my),
+    color-mix(in lab, var(--accent) 28%, transparent) 0%,
+    color-mix(in lab, var(--white) 5%, transparent) 30%,
+    transparent 65%
+  );
+  mix-blend-mode: soft-light;
+  opacity: 0;
+  transition: opacity 360ms var(--bezierFastoutSlowin);
+
+  .frame[data-active='true'] & {
+    opacity: 1;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    display: none;
+  }
+}
+
+.caption {
+  font-family: var(--serifFontStack);
+  font-style: italic;
+  font-weight: 400;
+  font-size: calc((14 / 16) * 1rem);
+  letter-spacing: 0.01em;
+  color: var(--textLight);
+  margin: 0;
+  padding-top: var(--spaceXS);
+  border-top: 1px solid var(--border);
+  width: 100%;
+}

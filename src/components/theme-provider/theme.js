@@ -14,6 +14,8 @@ const baseTokens = {
   systemFontStack:
     'system-ui, -apple-system, BlinkMacSystemFont, San Francisco, Roboto, Segoe UI, Ubuntu, Helvetica Neue, sans-serif',
   fontStack: `Gotham, var(--systemFontStack)`,
+  serifFontStack:
+    `Cormorant, 'Cormorant Garamond', 'Playfair Display', Didot, 'Bodoni MT', Georgia, 'Times New Roman', serif`,
   monoFontStack:
     'ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, Liberation Mono, Courier New, monospace',
   japaneseFontStack:
@@ -113,27 +115,39 @@ const tokensMobileSmall = {
 
 // Tokens that change based on theme
 const dark = {
-  background: 'oklch(17.76% 0 0)',
-  backgroundLight: 'oklch(21.78% 0 0)',
-  primary: 'oklch(84.42% 0.19 202.24)',
-  accent: 'oklch(84.42% 0.19 202.24)',
+  background: 'oklch(14.5% 0.004 60)',
+  backgroundLight: 'oklch(19% 0.004 60)',
+  surface: 'oklch(22% 0.005 60)',
+  border: 'color-mix(in lab, var(--text) 12%, transparent)',
+  borderStrong: 'color-mix(in lab, var(--text) 22%, transparent)',
+  primary: 'oklch(86% 0.10 252)',
+  accent: 'oklch(86% 0.10 252)',
+  accentSoft: 'color-mix(in lab, var(--accent) 18%, transparent)',
   error: 'oklch(65.91% 0.249 13.76)',
-  text: 'var(--white)',
+  text: 'oklch(98% 0.005 80)',
   textTitle: 'var(--text)',
-  textBody: 'color-mix(in lab, var(--text) 80%, transparent)',
-  textLight: 'color-mix(in lab, var(--text) 60%, transparent)',
+  textBody: 'color-mix(in lab, var(--text) 82%, transparent)',
+  textLight: 'color-mix(in lab, var(--text) 58%, transparent)',
+  glassBg: 'color-mix(in lab, var(--background) 55%, transparent)',
+  glassBorder: 'color-mix(in lab, var(--text) 14%, transparent)',
 };
 
 const light = {
-  background: 'oklch(96.12% 0 0)',
-  backgroundLight: 'var(--white)',
-  primary: 'var(--black)',
-  accent: 'oklch(84.42% 0.19 202.24)',
+  background: 'oklch(97.2% 0.005 80)',
+  backgroundLight: 'oklch(99% 0.003 80)',
+  surface: 'oklch(94% 0.005 80)',
+  border: 'color-mix(in lab, var(--text) 10%, transparent)',
+  borderStrong: 'color-mix(in lab, var(--text) 18%, transparent)',
+  primary: 'oklch(18% 0.006 60)',
+  accent: 'oklch(76% 0.13 252)',
+  accentSoft: 'color-mix(in lab, var(--accent) 18%, transparent)',
   error: 'oklch(63.17% 0.259 25.41)',
-  text: 'var(--black)',
-  textTitle: 'color-mix(in lab, var(--text) 90%, transparent)',
-  textBody: 'color-mix(in lab, var(--text) 75%, transparent)',
-  textLight: 'color-mix(in lab, var(--text) 55%, transparent)',
+  text: 'oklch(14% 0.006 60)',
+  textTitle: 'color-mix(in lab, var(--text) 92%, transparent)',
+  textBody: 'color-mix(in lab, var(--text) 72%, transparent)',
+  textLight: 'color-mix(in lab, var(--text) 50%, transparent)',
+  glassBg: 'color-mix(in lab, var(--background) 60%, transparent)',
+  glassBorder: 'color-mix(in lab, var(--text) 10%, transparent)',
 };
 
 export const tokens = {

@@ -108,14 +108,15 @@ export const Contact = () => {
             ref={nodeRef}
             onSubmit={handleSubmit}
           >
+            <span className={styles.eyebrow} data-status={status}>Contact</span>
             <Heading
               className={styles.title}
               data-status={status}
-              level={3}
+              level={2}
               as="h1"
               style={getDelay(tokens.base.durationXS, initDelay, 0.3)}
             >
-              <DecoderText text="Say hello" start={status !== 'exited'} delay={300} />
+              <DecoderText text="Say hello." start={status !== 'exited'} delay={300} />
             </Heading>
             <Divider
               className={styles.divider}

@@ -1,0 +1,217 @@
+.connect {
+  display: grid;
+  grid-template-columns: 100%;
+  justify-items: center;
+  align-items: center;
+  min-height: 100vh;
+  width: 100%;
+}
+
+.content {
+  max-width: var(--maxWidthS);
+  width: 100%;
+  padding: var(--space4XL) 0 var(--space2XL);
+
+  @media (max-width: 696px) {
+    padding: var(--space5XL) 0 var(--space2XL);
+    align-self: flex-start;
+  }
+}
+
+/* Shared reveal: opacity + rise, staggered by the --delay custom property
+   each element receives from getDelay() in connect.jsx. */
+.title,
+.intro,
+.actions,
+.channelItem {
+  transition-property: opacity;
+  transition-timing-function: var(--bezierFastoutSlowin);
+  transition-duration: var(--durationXL);
+  transition-delay: var(--delay);
+  opacity: 0;
+
+  @media (prefers-reduced-motion: no-preference) {
+    transition-property: transform, opacity;
+    transform: translate3d(0, var(--space3XL), 0);
+  }
+
+  &[data-status='entering'],
+  &[data-status='entered'] {
+    transform: none;
+    opacity: 1;
+  }
+}
+
+.title {
+  margin-bottom: var(--spaceL);
+
+  @media (prefers-reduced-motion: no-preference) {
+    transform: translate3d(0, var(--space5XL), 0);
+  }
+}
+
+.divider {
+  margin-bottom: var(--space2XL);
+}
+
+.intro {
+  color: var(--textBody);
+  margin-bottom: var(--space2XL);
+  max-width: 46ch;
+}
+
+/* ── Actions ───────────────────────────────────────────────── */
+.actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--spaceM);
+  margin-bottom: var(--space3XL);
+}
+
+.saveButton,
+.shareButton {
+  @media (max-width: 696px) {
+    width: 100%;
+    justify-content: center;
+  }
+}
+
+/* ── Channels ──────────────────────────────────────────────── */
+.channels {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  border-top: 1px solid color-mix(in lab, var(--textTitle) 15%, transparent);
+}
+
+.channelItem {
+  position: relative;
+  display: flex;
+  align-items: center;
+  border-bottom: 1px solid color-mix(in lab, var(--textTitle) 15%, transparent);
+}
+
+.channel {
+  flex: 1 1 auto;
+  min-width: 0;
+  display: flex;
+  align-items: center;
+  gap: var(--spaceL);
+  padding: var(--spaceL) var(--spaceS);
+  text-decoration: none;
+  color: var(--textTitle);
+  position: relative;
+  isolation: isolate;
+}
+
+/* Accent sweep on hover — the same gesture the monogram highlight uses */
+.channel::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  background: color-mix(in lab, var(--accent) 12%, transparent);
+  transform: scale3d(0, 1, 1);
+  transform-origin: left;
+  transition: transform var(--durationM) var(--bezierFastoutSlowin);
+}
+
+.channel:hover::before,
+.channel:focus-visible::before {
+  transform: scale3d(1, 1, 1);
+}
+
+.channelIcon {
+  flex-shrink: 0;
+  color: var(--accent);
+  transition: transform var(--durationM) var(--bezierFastoutSlowin);
+}
+
+.channel:hover .channelIcon {
+  transform: scale3d(1.12, 1.12, 1);
+}
+
+.channelText {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  min-width: 0;
+  flex: 1 1 auto;
+}
+
+.channelLabel {
+  font-size: var(--fontSizeBodyS);
+  font-weight: var(--fontWeightMedium);
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--textLight);
+}
+
+.channelValue {
+  font-size: var(--fontSizeBodyM);
+  color: var(--textTitle);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.channelArrow {
+  flex-shrink: 0;
+  color: var(--textLight);
+  transition: transform var(--durationM) var(--bezierFastoutSlowin),
+    color var(--durationM) ease;
+}
+
+.channel:hover .channelArrow {
+  color: var(--textTitle);
+
+  @media (prefers-reduced-motion: no-preference) {
+    transform: translate3d(var(--spaceXS), 0, 0);
+  }
+}
+
+/* ── Copy affordance ───────────────────────────────────────── */
+.copyButton {
+  flex-shrink: 0;
+  display: grid;
+  place-items: center;
+  width: 44px;
+  height: 44px;
+  margin-right: var(--spaceXS);
+  background: none;
+  border: 0;
+  padding: 0;
+  cursor: pointer;
+  color: var(--textLight);
+  transition: color var(--durationS) ease;
+}
+
+.copyButton:hover {
+  color: var(--accent);
+}
+
+/* ── Toast ─────────────────────────────────────────────────── */
+.toast {
+  position: fixed;
+  left: 50%;
+  bottom: var(--space2XL);
+  z-index: var(--zIndex4);
+  display: flex;
+  align-items: center;
+  gap: var(--spaceS);
+  padding: var(--spaceS) var(--spaceL);
+  background: var(--textTitle);
+  color: var(--background);
+  font-size: var(--fontSizeBodyS);
+  font-weight: var(--fontWeightMedium);
+  opacity: 0;
+  transform: translate3d(-50%, var(--spaceM), 0);
+  transition: opacity var(--durationM) ease, transform var(--durationM)
+    var(--bezierFastoutSlowin);
+
+  &[data-status='entering'],
+  &[data-status='entered'] {
+    opacity: 1;
+    transform: translate3d(-50%, 0, 0);
+  }
+}

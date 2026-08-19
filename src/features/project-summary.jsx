@@ -7,12 +7,54 @@ import { Text } from '../components/text';
 import { useTheme } from '../components/theme-provider';
 import { Transition } from '../components/transition';
 import { Loader } from '../components/loader';
+import { TiltImage } from '../components/tilt-image';
 import { useWindowSize } from '../hooks';
 import { Suspense, lazy, useState } from 'react';
 import { cssProps, media } from '../components/utils/style';
 import { useHydrated } from '../hooks/useHydrated';
 import katakana from './katakana.svg';
 import styles from './project-summary.module.css';
+
+const asset = file => `/assets/images/${encodeURIComponent(file)}`;
+
+const sectionGalleries = {
+  1: [
+    {
+      src: asset('baggy1.jpg'),
+      alt: 'Modern baggy denim — editorial silhouette',
+      caption: 'Editorial · Streetwear',
+    },
+    {
+      src: asset('baggy2.jpg'),
+      alt: 'Urban denim styling — full body',
+      caption: 'Urban · Silhouette',
+    },
+  ],
+  2: [
+    {
+      src: asset('Extra Wide Leg Baggy Carpenter Denim Jeans Vintage Inspired Relaxed Workwear Utility Pants With Multiple Pockets Fall Winter Fashion Streetwear.jpg'),
+      alt: 'Extra wide-leg carpenter denim jeans',
+      caption: 'Wide-Leg · Carpenter',
+    },
+    {
+      src: asset('Deconstructed Washed Jeans.jpg'),
+      alt: 'Deconstructed washed denim — signature treatment',
+      caption: 'Deconstructed · Washed',
+    },
+  ],
+  3: [
+    {
+      src: asset('rust-smeared.jpg'),
+      alt: 'Rust-smeared signature wash treatment',
+      caption: 'Signature Wash · Crafted',
+    },
+    {
+      src: asset('baggy-backpose.jpeg'),
+      alt: 'Back-pose detail — manufacturing reference',
+      caption: 'Detail · Manufactured in Mumbai',
+    },
+  ],
+};
 
 const Model = lazy(() =>
   import('../components/model').then(module => ({ default: module.Model }))
@@ -25,6 +67,7 @@ export function ProjectSummary({
   index,
   section,
   title,
+  descriptionLead,
   description,
   model,
   buttonText,
@@ -64,9 +107,9 @@ export function ProjectSummary({
     );
   }
 
-  function renderDetails(visible) {
+  function renderHeader(visible) {
     return (
-      <div className={styles.details}>
+      <header className={styles.header}>
         <div aria-hidden className={styles.index}>
           <Divider
             notchWidth="64px"
@@ -75,8 +118,7 @@ export function ProjectSummary({
             collapseDelay={1000}
           />
           <span className={styles.indexNumber} data-visible={visible}>
-            {/* {indexText} */}
-            {section}
+            <span className={styles.indexLabel}>{section}</span>
           </span>
         </div>
         <Heading
@@ -88,24 +130,42 @@ export function ProjectSummary({
         >
           {title}
         </Heading>
-        <Text className={styles.description} data-visible={visible} as="p">
-          {description}
-        </Text>
-        {/* <div className={styles.button} data-visible={visible}>
-          <Button iconHoverShift href={buttonLink} iconEnd="arrow-right">
-            {buttonText}
-          </Button>
-        </div> */}
-      </div>
+      </header>
     );
   }
 
-  function renderImage(visible) {
+  function renderDescriptionLead(visible) {
+    if (!descriptionLead) return null;
     return (
-      <div className={styles.title} data-visible={visible}>
-        {isHydrated && visible && (
-          <img src="/assets/images/baggy-mud.jpeg" alt="" height="500" />
-        )}
+      <Text className={styles.descriptionLead} data-visible={visible} as="div">
+        {descriptionLead}
+      </Text>
+    );
+  }
+
+  function renderDescription(visible) {
+    return (
+      <Text className={styles.description} data-visible={visible} as="div">
+        {description}
+      </Text>
+    );
+  }
+
+  function renderGallery(visible) {
+    const gallery = sectionGalleries[index] || sectionGalleries[1];
+    return (
+      <div className={styles.gallery} data-visible={visible}>
+        {isHydrated &&
+          gallery.map((img, i) => (
+            <TiltImage
+              key={`${img.src}-${i}`}
+              src={img.src}
+              alt={img.alt}
+              caption={img.caption}
+              className={styles.galleryItem}
+              style={{ '--itemIndex': i }}
+            />
+          ))}
       </div>
     );
   }
@@ -124,23 +184,16 @@ export function ProjectSummary({
       tabIndex={-1}
       {...rest}
     >
-      <div className={styles.content} style={{ gridTemplateColumns: index !== 1 && 'auto', marginTop: 'auto' }}>
+      <div className={styles.content}>
         <Transition in={sectionVisible || focused}>
           {({ visible }) => (
             <>
-              {!alternate && !isMobile && (
-                <>
-                  {renderDetails(visible)}
-                  {index === 1 && renderImage(sectionVisible)}
-                  {/* {renderPreview(visible)} */}
-                </>
-              )}
-              {(alternate || isMobile) && (
-                <>
-                  {/* {renderPreview(visible)} */}
-                  {renderDetails(visible)}
-                </>
-              )}
+              {renderHeader(visible)}
+              <div className={styles.body}>
+                {renderDescriptionLead(visible)}
+                {renderGallery(sectionVisible)}
+                {renderDescription(visible)}
+              </div>
             </>
           )}
         </Transition>

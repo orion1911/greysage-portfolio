@@ -58,5 +58,29 @@
   "bluesky": {
     "width": 24,
     "height": 24
+  },
+  "save-contact": {
+    "width": 24,
+    "height": 24
+  },
+  "whatsapp": {
+    "width": 24,
+    "height": 24
+  },
+  "phone": {
+    "width": 24,
+    "height": 24
+  },
+  "mail": {
+    "width": 24,
+    "height": 24
+  },
+  "instagram": {
+    "width": 24,
+    "height": 24
+  },
+  "map-pin": {
+    "width": 24,
+    "height": 24
   }
 }
