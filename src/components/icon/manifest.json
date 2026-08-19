@@ -82,5 +82,9 @@
   "map-pin": {
     "width": 24,
     "height": 24
+  },
+  "home": {
+    "width": 24,
+    "height": 24
   }
 }

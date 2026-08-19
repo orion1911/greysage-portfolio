@@ -9,7 +9,7 @@ export const Footer = ({ className }) => (
       <Text size="s" className={styles.brand}>
         <span className={styles.mark}>{config.role}</span>
         <span className={styles.separator} aria-hidden>·</span>
-        <span className={styles.tagline}>Mumbai · Est. 2016</span>
+        <span className={styles.tagline}>Mumbai · Est. 2015</span>
       </Text>
       <Text size="s" className={styles.copy}>
         {`© ${new Date().getFullYear()} ${config.role}. All rights reserved.`}

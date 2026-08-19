@@ -1,3 +1,4 @@
+import { Link as RouterLink } from 'react-router-dom';
 import { Button } from '../components/button';
 import { DecoderText } from '../components/decoder-text';
 import { Divider } from '../components/divider';
@@ -99,16 +100,44 @@ export const Contact = () => {
   };
 
   return (
-    <Section className={styles.contact}>
+    <>
+      <Section className={styles.contact}>
       <Transition unmount in={!formState.success} timeout={1600}>
         {({ status, nodeRef }) => (
           <form
             className={styles.form}
             method="post"
+            // Suppresses the browser's own validation bubbles. handleSubmit
+            // validates both fields and reports through the form's error panel,
+            // so the native tooltips duplicated it in an unstyled voice.
+            // `required` stays on the inputs for assistive tech.
+            noValidate
             ref={nodeRef}
             onSubmit={handleSubmit}
           >
-            <span className={styles.eyebrow} data-status={status}>Contact</span>
+            <div className={styles.topRow}>
+              <span className={styles.eyebrow} data-status={status}>Contact</span>
+              <RouterLink
+                to="/connect"
+                className={styles.back}
+                data-status={status}
+                aria-label="Back to connect"
+              >
+                {/* Inline rather than <Icon>, which pulls the arrow from an
+                    external SVG sprite — the label painted immediately while
+                    the glyph waited on that request, so the arrow arrived late,
+                    most visibly on mobile. */}
+                <svg
+                  className={styles.backIcon}
+                  viewBox="0 0 24 24"
+                  fill="currentColor"
+                  aria-hidden
+                >
+                  <path d="M10.8 4.8 3.6 12l7.2 7.2 1.4-1.4L7.4 13H20v-2H7.4l4.8-4.8-1.4-1.4Z" />
+                </svg>
+                <span className={styles.backLabel}>Back</span>
+              </RouterLink>
+            </div>
             <Heading
               className={styles.title}
               data-status={status}
@@ -229,8 +258,10 @@ export const Contact = () => {
           </div>
         )}
       </Transition>
-      <Footer className={styles.footer} />
-    </Section>
+      </Section>
+      {/* Sibling of the Section so it matches the home page footer exactly. */}
+      <Footer />
+    </>
   );
 };
 

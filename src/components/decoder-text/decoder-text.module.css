@@ -1,9 +1,35 @@
 @layer components {
+  /* The scrambled string is roughly twice as wide as the text it resolves to,
+     because katakana are full-width. Previously the glyphs were shrunk on
+     mobile to compensate, which made them visibly smaller than the latin
+     characters and made the line jitter as each glyph's advance width changed.
+
+     Instead: the real text (already present for screen readers) sizes the box,
+     rendered transparent so it stays in the accessibility tree, and the
+     animated copy is laid over the top. The scramble can be as wide as it
+     likes — it's clipped, so it can never wrap or stretch its column. */
   .text {
+    position: relative;
+    display: inline-block;
+    max-width: 100%;
+    overflow: hidden;
+    vertical-align: bottom;
+
     &::after {
       content: '_';
       visibility: hidden;
     }
+  }
+
+  .sizer {
+    visibility: hidden;
+    white-space: nowrap;
+  }
+
+  .content {
+    position: absolute;
+    inset: 0;
+    white-space: nowrap;
   }
 
   .glyph {

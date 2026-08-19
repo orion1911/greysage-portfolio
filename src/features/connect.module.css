@@ -1,29 +1,45 @@
 .connect {
   display: grid;
+  grid-template-rows: 1fr auto;
   grid-template-columns: 100%;
   justify-items: center;
+  justify-content: center;
   align-items: center;
   min-height: 100vh;
   width: 100%;
+
+  @media (max-width: 696px) {
+    padding-top: 0;
+  }
 }
 
 .content {
+  position: relative; /* containing block for the off-screen QR canvas */
+  z-index: 1; /* above the sphere */
+  grid-area: 1 / 1;
   max-width: var(--maxWidthS);
   width: 100%;
-  padding: var(--space4XL) 0 var(--space2XL);
+  padding: var(--space2XL) 0;
 
   @media (max-width: 696px) {
-    padding: var(--space5XL) 0 var(--space2XL);
+    /* was --space5XL (128px): far more clearance than the 40px navbar pill
+       needs, which left a large empty band above the profile. */
+    padding: var(--space3XL) 0 var(--space2XL);
     align-self: flex-start;
   }
 }
 
-/* Shared reveal: opacity + rise, staggered by the --delay custom property
-   each element receives from getDelay() in connect.jsx. */
+/* Eyebrow, title and divider mirror contact.module.css so both pages open with
+   the same motion. */
+/* Sits directly above the divider rather than at the top of the page, so the
+   profile block leads and the label reads as a section marker for the links. */
+/* Shared reveal. Elements set their own --delay through getDelay(). */
+.avatar,
 .title,
-.intro,
-.actions,
-.channelItem {
+.tagline,
+.socials,
+.cardItem,
+.qr {
   transition-property: opacity;
   transition-timing-function: var(--bezierFastoutSlowin);
   transition-duration: var(--durationXL);
@@ -40,147 +56,308 @@
     transform: none;
     opacity: 1;
   }
+
+  &[data-status='exiting'] {
+    transition-duration: var(--durationM);
+    transition-delay: 0s;
+    opacity: 0;
+  }
+
+  /* Once the reveal has landed, drop its stagger delay. Otherwise hover
+     transforms on these same elements inherit it and lag by up to a second. */
+  &[data-status='entered'] {
+    transition-delay: 0s;
+    transition-duration: var(--durationM);
+  }
+}
+
+/* ── Profile ───────────────────────────────────────────────── */
+.profile {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+}
+
+.avatar {
+  display: grid;
+  place-items: center;
+  width: clamp(72px, 20vw, 96px);
+  height: clamp(72px, 20vw, 96px);
+  border-radius: 999px;
+  margin-bottom: var(--spaceL);
+  /* Same recipe as .glassEffect on the navbar pills. backdrop-filter samples
+     what's painted behind, which here is the sphere — so the disc picks up and
+     blurs whatever colour is drifting past underneath. */
+  background: var(--glassBg);
+  backdrop-filter: blur(18px) saturate(140%);
+  -webkit-backdrop-filter: blur(18px) saturate(140%);
+  border: 1px solid color-mix(in lab, var(--text) 16%, transparent);
+  box-shadow:
+    0 1px 0 color-mix(in lab, var(--text) 8%, transparent) inset,
+    0 2px 6px -2px color-mix(in lab, var(--black) 22%, transparent),
+    0 10px 24px -12px color-mix(in lab, var(--black) 30%, transparent);
+  transition: border-color var(--durationM) ease, transform var(--durationM)
+    var(--bezierFastoutSlowin);
+}
+
+.avatar svg {
+  width: 50%;
+  height: 50%;
+  /* Monogram's own fill class is applied under a name its module doesn't
+     define, so set it here too rather than depend on that being fixed. */
+  fill: var(--textTitle);
 }
 
 .title {
-  margin-bottom: var(--spaceL);
+  margin-bottom: var(--spaceXS);
+  letter-spacing: -0.04em;
+  /* Heading's H2 step is 58px, which overflows a 360px viewport. */
+  font-size: clamp(2rem, 12vw, var(--fontSizeH2));
+  line-height: 1.05;
 
   @media (prefers-reduced-motion: no-preference) {
     transform: translate3d(0, var(--space5XL), 0);
   }
 }
 
-.divider {
-  margin-bottom: var(--space2XL);
+.tagline {
+  color: var(--textLight);
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  font-size: calc((12 / 16) * 1rem);
+  font-weight: var(--fontWeightMedium);
+  margin-bottom: var(--spaceL);
 }
 
-.intro {
-  color: var(--textBody);
-  margin-bottom: var(--space2XL);
-  max-width: 46ch;
-}
-
-/* ── Actions ───────────────────────────────────────────────── */
-.actions {
+.socials {
   display: flex;
-  flex-wrap: wrap;
-  gap: var(--spaceM);
-  margin-bottom: var(--space3XL);
+  gap: var(--spaceS);
+  margin-bottom: var(--spaceXL);
 }
 
-.saveButton,
-.shareButton {
-  @media (max-width: 696px) {
-    width: 100%;
-    justify-content: center;
+.social {
+  display: grid;
+  place-items: center;
+  width: 46px;
+  height: 46px;
+  border-radius: 999px;
+  color: var(--textBody);
+  border: 1px solid var(--glassBorder);
+  background: color-mix(in lab, var(--background) 28%, transparent);
+  backdrop-filter: blur(16px) saturate(180%);
+  -webkit-backdrop-filter: blur(16px) saturate(180%);
+  transition: color var(--durationM) ease, border-color var(--durationM) ease,
+    transform var(--durationM) var(--bezierFastoutSlowin);
+}
+
+.social:hover {
+  color: var(--accent);
+  border-color: color-mix(in lab, var(--accent) 60%, var(--border));
+  transform: translateY(-2px);
+}
+
+/* ── Stacked cards ─────────────────────────────────────────── */
+.cards {
+  list-style: none;
+  margin: 0 0 var(--space2XL);
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: var(--spaceM);
+}
+
+.cardItem {
+  position: relative;
+  display: flex;
+  align-items: stretch;
+  background: var(--glassBg);
+  border: 1px solid var(--glassBorder);
+  border-radius: var(--spaceM);
+  backdrop-filter: blur(18px) saturate(140%);
+  -webkit-backdrop-filter: blur(18px) saturate(140%);
+  box-shadow: 0 1px 0 color-mix(in lab, var(--text) 6%, transparent) inset;
+  /* Longhand on purpose. The `transition` shorthand here would reset
+     transition-property/delay set by the reveal group above, so cards popped in
+     instead of fading and lost their stagger. Duration, delay and easing all
+     come from the group, which resets them once the reveal has landed. */
+  transition-property: opacity, transform, border-color;
+}
+
+.cardItem:hover {
+  border-color: color-mix(in lab, var(--accent) 60%, var(--glassBorder));
+
+  @media (prefers-reduced-motion: no-preference) {
+    transform: translateY(-2px);
   }
 }
 
-/* ── Channels ──────────────────────────────────────────────── */
-.channels {
-  list-style: none;
-  margin: 0;
-  padding: 0;
-  border-top: 1px solid color-mix(in lab, var(--textTitle) 15%, transparent);
-}
-
-.channelItem {
-  position: relative;
-  display: flex;
-  align-items: center;
-  border-bottom: 1px solid color-mix(in lab, var(--textTitle) 15%, transparent);
-}
-
-.channel {
+.card {
   flex: 1 1 auto;
   min-width: 0;
   display: flex;
   align-items: center;
-  gap: var(--spaceL);
-  padding: var(--spaceL) var(--spaceS);
+  gap: var(--spaceM);
+  padding: var(--spaceM) var(--spaceM);
+  min-height: 72px;
+  text-align: left;
   text-decoration: none;
   color: var(--textTitle);
-  position: relative;
-  isolation: isolate;
+  font-family: inherit;
+  background: none;
+  border: 0;
+  border-radius: var(--spaceM);
+  cursor: pointer;
 }
 
-/* Accent sweep on hover — the same gesture the monogram highlight uses */
-.channel::before {
-  content: '';
-  position: absolute;
-  inset: 0;
-  z-index: -1;
-  background: color-mix(in lab, var(--accent) 12%, transparent);
-  transform: scale3d(0, 1, 1);
-  transform-origin: left;
-  transition: transform var(--durationM) var(--bezierFastoutSlowin);
-}
-
-.channel:hover::before,
-.channel:focus-visible::before {
-  transform: scale3d(1, 1, 1);
-}
-
-.channelIcon {
+.cardIcon {
+  display: grid;
+  place-items: center;
   flex-shrink: 0;
+  width: 46px;
+  height: 46px;
+  border-radius: var(--spaceS);
   color: var(--accent);
+  background: color-mix(in lab, var(--accent) 12%, transparent);
   transition: transform var(--durationM) var(--bezierFastoutSlowin);
 }
 
-.channel:hover .channelIcon {
-  transform: scale3d(1.12, 1.12, 1);
+.cardItem:hover .cardIcon {
+  transform: scale3d(1.08, 1.08, 1);
 }
 
-.channelText {
+.cardText {
   display: flex;
   flex-direction: column;
   gap: 2px;
-  min-width: 0;
   flex: 1 1 auto;
+  min-width: 0;
 }
 
-.channelLabel {
-  font-size: var(--fontSizeBodyS);
-  font-weight: var(--fontWeightMedium);
-  letter-spacing: 0.06em;
-  text-transform: uppercase;
-  color: var(--textLight);
-}
-
-.channelValue {
+.cardLabel {
   font-size: var(--fontSizeBodyM);
+  font-weight: var(--fontWeightMedium);
   color: var(--textTitle);
+}
+
+.cardCaption {
+  font-size: calc((12 / 16) * 1rem);
+  letter-spacing: 0.06em;
+  color: var(--textLight);
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
 }
 
-.channelArrow {
+.cardEnd {
   flex-shrink: 0;
   color: var(--textLight);
   transition: transform var(--durationM) var(--bezierFastoutSlowin),
     color var(--durationM) ease;
 }
 
-.channel:hover .channelArrow {
-  color: var(--textTitle);
+.cardItem:hover .cardEnd {
+  color: var(--accent);
 
   @media (prefers-reduced-motion: no-preference) {
     transform: translate3d(var(--spaceXS), 0, 0);
   }
 }
 
+/* ── Featured card ─────────────────────────────────────────── */
+.featured {
+  flex-direction: column;
+  align-items: stretch;
+  gap: 0;
+  padding: var(--spaceS) var(--spaceS) 0;
+}
+
+.banner {
+  position: relative;
+  display: block;
+  width: 100%;
+  aspect-ratio: 16 / 9;
+  border-radius: var(--spaceXS);
+  overflow: hidden;
+  background: color-mix(in lab, var(--accent) 14%, var(--background));
+}
+
+.banner img {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  filter: saturate(0.9) contrast(1.05);
+  transition: transform var(--durationXL) var(--bezierFastoutSlowin);
+}
+
+.cardItem:hover .banner img {
+  transform: scale3d(1.04, 1.04, 1);
+}
+
+.bannerMark {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: var(--spaceXS);
+  padding: 0 var(--spaceL);
+  background: linear-gradient(
+    100deg,
+    color-mix(in lab, var(--black) 72%, transparent) 0%,
+    color-mix(in lab, var(--black) 30%, transparent) 65%,
+    transparent 100%
+  );
+}
+
+.bannerName {
+  font-size: clamp(1.5rem, 7vw, 2.25rem);
+  font-weight: var(--fontWeightBold);
+  letter-spacing: -0.03em;
+  line-height: 1;
+  color: var(--white);
+}
+
+.bannerRule {
+  width: 40px;
+  height: 1px;
+  background: var(--accent);
+}
+
+.bannerTag {
+  font-size: calc((11 / 16) * 1rem);
+  letter-spacing: 0.28em;
+  text-transform: uppercase;
+  color: color-mix(in lab, var(--white) 78%, transparent);
+}
+
+.featuredLabel {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--spaceXS);
+  padding: var(--spaceM) 0;
+  font-size: var(--fontSizeBodyM);
+  font-weight: var(--fontWeightMedium);
+  color: var(--textTitle);
+}
+
 /* ── Copy affordance ───────────────────────────────────────── */
+/* A flow sibling of .card, not an overlay — an absolutely positioned button
+   sat on top of the row's trailing icon and clipped its own tap target. */
 .copyButton {
-  flex-shrink: 0;
+  flex: 0 0 auto;
+  align-self: stretch;
   display: grid;
   place-items: center;
-  width: 44px;
-  height: 44px;
-  margin-right: var(--spaceXS);
+  width: 52px;
   background: none;
   border: 0;
+  border-left: 1px solid color-mix(in lab, var(--text) 8%, transparent);
   padding: 0;
+  margin: var(--spaceS) 0;
   cursor: pointer;
   color: var(--textLight);
   transition: color var(--durationS) ease;
@@ -188,6 +365,77 @@
 
 .copyButton:hover {
   color: var(--accent);
+}
+
+/* ── QR ────────────────────────────────────────────────────── */
+.qr {
+  display: flex;
+  align-items: center;
+  gap: var(--spaceL);
+  padding: var(--spaceL);
+  border: 1px solid var(--border);
+  border-radius: var(--spaceM);
+
+  @media (max-width: 696px) {
+    flex-direction: column;
+    text-align: center;
+  }
+}
+
+.qrTile {
+  flex-shrink: 0;
+  display: grid;
+  place-items: center;
+  padding: var(--spaceXS);
+  border-radius: var(--spaceXS);
+  background: #fff;
+  line-height: 0;
+}
+
+.qrBody {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spaceXS);
+  min-width: 0;
+}
+
+.qrLabel {
+  font-size: calc((11 / 16) * 1rem);
+  letter-spacing: 0.28em;
+  text-transform: uppercase;
+  font-weight: var(--fontWeightMedium);
+  color: var(--accent);
+  margin-bottom: var(--spaceM);
+}
+
+.qrText {
+  color: var(--textLight);
+  margin-bottom: var(--spaceXS);
+}
+
+/* The body column is too narrow to sit both buttons on one row, so stack them
+   and match their widths rather than letting one wrap awkwardly under the
+   other. */
+.qrActions {
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  gap: var(--spaceS);
+}
+
+.qrButton {
+  justify-content: center;
+}
+
+/* Rendered only as the source for the PNG download. Kept in the layout tree —
+   display:none would stop the canvas painting in some browsers. */
+.qrHidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+  pointer-events: none;
 }
 
 /* ── Toast ─────────────────────────────────────────────────── */
@@ -204,6 +452,7 @@
   color: var(--background);
   font-size: var(--fontSizeBodyS);
   font-weight: var(--fontWeightMedium);
+  border-radius: 999px;
   opacity: 0;
   transform: translate3d(-50%, var(--spaceM), 0);
   transition: opacity var(--durationM) ease, transform var(--durationM)
@@ -213,5 +462,62 @@
   &[data-status='entered'] {
     opacity: 1;
     transform: translate3d(-50%, 0, 0);
+  }
+}
+
+/* Matches contact.module.css so both pages settle their footer the same way. */
+
+
+/* ── Small screens ─────────────────────────────────────────── */
+@media (max-width: 696px) {
+  .content {
+    padding-inline: var(--spaceS);
+  }
+
+  .card {
+    gap: var(--spaceS);
+    padding: var(--spaceM) var(--spaceS);
+    min-height: 68px;
+  }
+
+  .cardIcon {
+    width: 42px;
+    height: 42px;
+  }
+
+  .copyButton {
+    width: 48px;
+  }
+
+  .qr {
+    padding: var(--spaceM);
+  }
+
+  .qrLabel {
+    letter-spacing: 0.2em;
+  }
+
+  .toast {
+    left: var(--spaceM);
+    right: var(--spaceM);
+    bottom: var(--spaceL);
+    justify-content: center;
+    transform: translate3d(0, var(--spaceM), 0);
+
+    &[data-status='entering'],
+    &[data-status='entered'] {
+      transform: none;
+    }
+  }
+}
+
+/* Very narrow phones — stop the caption forcing a horizontal scroll. */
+@media (max-width: 380px) {
+  .cardCaption {
+    font-size: calc((11 / 16) * 1rem);
+  }
+
+  .featuredLabel {
+    font-size: var(--fontSizeBodyS);
   }
 }

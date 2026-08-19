@@ -8,9 +8,47 @@ const Sphere3D = () => {
   const containerRef = useRef(null);
 
   useEffect(() => {
-    const sphere = new DisplacementSphere(containerRef.current);
+    let sphere;
+    let cancelled = false;
+
+    const start = () => {
+      if (cancelled || !containerRef.current) return;
+
+      // If WebGL is unavailable or the context limit is hit, three.js throws
+      // from the constructor. Uncaught, that propagates out of the effect and
+      // React unmounts the whole tree — a blank, unclickable page.
+      try {
+        sphere = new DisplacementSphere(containerRef.current);
+      } catch (error) {
+        console.warn('Sphere background unavailable:', error);
+      }
+    };
+
+    // Building the geometry blocks the main thread for a noticeable stretch.
+    // Run it during idle time so it can't stall the page's entrance
+    // animations — done synchronously, it eats them entirely: every element
+    // jumps straight to its final state instead of easing in.
+    const idle = typeof window.requestIdleCallback === 'function';
+    const handle = idle
+      ? window.requestIdleCallback(start, { timeout: 2500 })
+      : setTimeout(start, 900);
+
     return () => {
-      sphere.destroy();
+      cancelled = true;
+
+      if (idle) {
+        window.cancelIdleCallback(handle);
+      } else {
+        clearTimeout(handle);
+      }
+
+      if (!sphere) return;
+
+      try {
+        sphere.destroy();
+      } catch (error) {
+        console.warn('Sphere teardown failed:', error);
+      }
     };
   }, []);
 

@@ -315,11 +315,16 @@ class DisplacementSphere {
     this.themeQuery = window.matchMedia('(prefers-color-scheme: light)');
     this.theme = this.themeQuery.matches ? 'dark' : 'light';
     this.updateLights();
-    this.themeQuery.addEventListener('change', this.onThemeChange.bind(this));
+    // Keep the bound references: destroy() previously passed a fresh .bind(this),
+    // which is a different function object, so these listeners were never removed
+    // and every unmounted sphere left one behind.
+    this.handleThemeChange = this.onThemeChange.bind(this);
+    this.themeQuery.addEventListener('change', this.handleThemeChange);
 
     this.reduceMotionQuery = window.matchMedia('(prefers-reduced-motion: reduce)');
     this.reduceMotion = this.reduceMotionQuery.matches;
-    this.reduceMotionQuery.addEventListener('change', this.onReduceMotionChange.bind(this));
+    this.handleReduceMotionChange = this.onReduceMotionChange.bind(this);
+    this.reduceMotionQuery.addEventListener('change', this.handleReduceMotionChange);
 
     this.rotationX = 0;
     this.rotationY = 0;
@@ -387,6 +392,8 @@ class DisplacementSphere {
   }
 
   onResize() {
+    if (this.destroyed) return;
+
     const width = window.innerWidth;
     const height = window.innerHeight;
     const adjustedHeight = height + height * 0.3;
@@ -420,6 +427,11 @@ class DisplacementSphere {
   }
 
   animate() {
+    // A frame can still be queued when the component unmounts mid-navigation.
+    // Touching disposed geometry or a lost context throws, and in dev that
+    // surfaces as a full-screen error overlay.
+    if (this.destroyed) return;
+
     this.animationId = requestAnimationFrame(this.animate.bind(this));
 
     if (this.uniforms.time) {
@@ -436,7 +448,16 @@ class DisplacementSphere {
   }
 
   render() {
-    this.renderer.render(this.scene, this.camera);
+    if (this.destroyed) return;
+
+    try {
+      this.renderer.render(this.scene, this.camera);
+    } catch (error) {
+      // A lost or disposed context should stop the loop, not crash the page.
+      this.destroyed = true;
+      cancelAnimationFrame(this.animationId);
+      console.warn('Sphere render stopped:', error);
+    }
   }
 
   throttle(fn, delay) {
@@ -450,10 +471,13 @@ class DisplacementSphere {
   }
 
   destroy() {
+    if (this.destroyed) return;
+    this.destroyed = true;
+
     window.removeEventListener('resize', this.onResize);
     window.removeEventListener('mousemove', this.onMouseMoveThrottled);
-    this.themeQuery.removeEventListener('change', this.onThemeChange.bind(this));
-    this.reduceMotionQuery.removeEventListener('change', this.onReduceMotionChange.bind(this));
+    this.themeQuery.removeEventListener('change', this.handleThemeChange);
+    this.reduceMotionQuery.removeEventListener('change', this.handleReduceMotionChange);
     this.observer.disconnect();
     cancelAnimationFrame(this.animationId);
     this.geometry.dispose();
@@ -469,7 +493,12 @@ class DisplacementSphere {
         // Dispose of other disposable objects like Lights, Cameras, etc. if needed
     });
     this.renderer.dispose();
-    this.container.removeChild(this.canvas);
+    // dispose() alone can leave the WebGL context alive; browsers cap these at
+    // ~16, so mounting the sphere on a second route makes reclaiming them matter.
+    this.renderer.forceContextLoss?.();
+    if (this.canvas.parentNode === this.container) {
+      this.container.removeChild(this.canvas);
+    }
   }
 }
 

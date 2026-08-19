@@ -3,6 +3,12 @@ import ReactDOM from 'react-dom/client';
 import App from './root';
 // import reportWebVitals from './reportWebVitals';
 
+// Set before the first render — a layout effect runs too late to stop the
+// browser painting at the previously restored scroll offset on reload.
+if (typeof window !== 'undefined' && 'scrollRestoration' in window.history) {
+  window.history.scrollRestoration = 'manual';
+}
+
 const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(
     <App />

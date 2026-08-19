@@ -13,7 +13,6 @@ import config from '../config.json';
 import { useHydrated } from '../hooks/useHydrated';
 import styles from './intro.module.css';
 import { AnimatePresence, motion } from 'framer-motion';
-import Sphere3D from './sphere3D';
 
 export function Intro({ id, sectionRef, scrollIndicatorHidden, ...rest }) {
   const { theme } = useTheme();
@@ -65,11 +64,6 @@ export function Intro({ id, sectionRef, scrollIndicatorHidden, ...rest }) {
       <Transition in key={theme} timeout={3000}>
         {({ visible, status }) => (
           <>
-            {isHydrated && (
-              <Suspense>
-                <Sphere3D />
-              </Suspense>
-            )}
             <header className={styles.text}>
               <h1 className={styles.name} data-visible={visible} id={titleId}>
                 <DecoderText text={config.proprietary + "'s"} delay={500} />

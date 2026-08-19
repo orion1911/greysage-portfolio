@@ -16,8 +16,15 @@
   }
 
   .inner {
-    max-width: var(--maxWidthXL);
-    margin: 0 auto;
+    /* The authored `max-width: var(--maxWidthXL); margin: 0 auto` never
+       centred anything: reset.module.css sets `:where(*) { margin: 0 }` in
+       @layer base, and because `base` is declared after `components`, layer
+       order beats the zero-specificity `:where()`. The row was capped but
+       flush-left, so the copyright stopped well short of the right edge.
+       Letting it fill the bar makes it genuinely right-aligned, and identical
+       on every page. To restore the capped width, put both lines back and
+       add `margin-inline: auto` outside the @layer. */
+    width: 100%;
     padding-top: var(--spaceXL);
     display: flex;
     align-items: center;
@@ -26,6 +33,7 @@
     flex-wrap: wrap;
 
     @media (max-width: 696px) {
+      flex-direction: column;
       justify-content: center;
       text-align: center;
       gap: var(--spaceM);
@@ -35,7 +43,14 @@
   .brand {
     display: inline-flex;
     align-items: center;
+    margin-right: auto;
     gap: var(--spaceS);
+
+    @media (max-width: 696px) {
+      margin-right: 0;
+      justify-content: center;
+      flex-wrap: wrap;
+    }
     letter-spacing: 0.18em;
     text-transform: uppercase;
     font-size: calc((12 / 16) * 1rem);
@@ -61,8 +76,17 @@
   }
 
   .copy {
+    /* margin-left keeps the copyright hard right even after the row wraps,
+       where space-between alone would drop it to the left edge. */
+    margin-left: auto;
+    text-align: right;
     font-size: calc((12 / 16) * 1rem);
     letter-spacing: 0.06em;
     color: var(--textLight);
+
+    @media (max-width: 696px) {
+      margin-left: 0;
+      text-align: center;
+    }
   }
 }

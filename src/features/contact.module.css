@@ -16,6 +16,8 @@
 }
 
 .form {
+  position: relative;
+  z-index: 1; /* above the sphere */
   grid-area: 1 / 1;
   max-width: var(--maxWidthS);
   width: 100%;
@@ -27,6 +29,66 @@
   }
 }
 
+.topRow {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--spaceM);
+  margin-bottom: var(--spaceL);
+  flex-wrap: wrap;
+}
+
+.back {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--spaceS);
+  padding: var(--spaceXS) var(--spaceM) var(--spaceXS) var(--spaceS);
+  border-radius: 999px;
+  border: 1px solid var(--border);
+  text-decoration: none;
+  color: var(--textLight);
+  font-size: calc((12 / 16) * 1rem);
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  font-weight: var(--fontWeightMedium);
+  line-height: 1;
+  opacity: 0;
+  transition: opacity var(--durationL) var(--bezierFastoutSlowin),
+    color var(--durationM) ease, border-color var(--durationM) ease;
+
+  &:hover {
+    color: var(--textTitle);
+    border-color: color-mix(in lab, var(--accent) 60%, var(--border));
+  }
+
+  &:hover .backIcon {
+    @media (prefers-reduced-motion: no-preference) {
+      transform: translate3d(calc(var(--spaceXS) * -1), 0, 0);
+    }
+  }
+
+  &[data-status='entering'],
+  &[data-status='entered'] {
+    opacity: 1;
+  }
+}
+
+/* Sized in px with display:block so the glyph sits on the same optical centre
+   as the uppercase label — an inline SVG sits on the text baseline, which is
+   what left the arrow looking a couple of pixels low. */
+.backIcon {
+  display: block;
+  flex-shrink: 0;
+  width: 15px;
+  height: 15px;
+  transition: transform var(--durationM) var(--bezierFastoutSlowin);
+}
+
+.backLabel {
+  display: block;
+  line-height: 1;
+}
+
 .eyebrow {
   display: inline-flex;
   align-items: center;
@@ -36,7 +98,6 @@
   font-size: calc((11 / 16) * 1rem);
   font-weight: var(--fontWeightMedium);
   color: var(--accent);
-  margin-bottom: var(--spaceL);
   opacity: 0;
   transition: opacity var(--durationL) var(--bezierFastoutSlowin);
 
@@ -330,12 +391,4 @@
 .formErrorIcon {
   flex: 0 0 auto;
   margin-right: var(--spaceS);
-}
-
-.footer {
-  opacity: 0;
-
-  &:global {
-    animation: fade-in var(--durationL) ease var(--durationXL) forwards;
-  }
 }

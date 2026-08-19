@@ -28,10 +28,11 @@
     color: var(--black);
   }
 
-  :global(:focus) {
+  /* Outlines follow the element's own border-radius, so don't set one here —
+     a fixed radius squares off round elements like the navbar pills. */
+  :global(:focus-visible) {
     outline: 2px solid var(--accent);
     outline-offset: 4px;
-    border-radius: 2px;
   }
 
   :global(:focus:not(:focus-visible)) {

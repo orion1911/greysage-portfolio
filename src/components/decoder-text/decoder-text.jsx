@@ -40,7 +40,21 @@ function shuffle(content, output, position) {
       return { type: CharType.Glyph, value: glyphs[rand] };
     }
 
-    return { type: CharType.Glyph, value: output[index].value };
+    // output starts life as a single-element array, so on the first spring tick
+    // every index past 0 is undefined. Reading .value off it threw
+    // "Cannot read properties of undefined" and, in dev, put the runtime error
+    // overlay over the page — most visibly right after a route change, which
+    // remounts every DecoderText at once.
+    const previous = output[index];
+
+    if (previous) {
+      return { type: CharType.Glyph, value: previous.value };
+    }
+
+    return {
+      type: CharType.Glyph,
+      value: glyphs[Math.floor(Math.random() * glyphs.length)],
+    };
   });
 }
 
@@ -94,6 +108,12 @@ export const DecoderText = memo(
     return (
       <span className={classes(styles.text, className)} {...rest}>
         <VisuallyHidden className={styles.label}>{text}</VisuallyHidden>
+        {/* Reserves exactly the width of the resolved text. The animated copy is
+            laid over it, so the much wider scrambled string never influences
+            layout. */}
+        <span aria-hidden className={styles.sizer}>
+          {text}
+        </span>
         <span aria-hidden className={styles.content} ref={container} />
       </span>
     );

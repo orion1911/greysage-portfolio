@@ -56,6 +56,18 @@
 .title {
   margin-bottom: var(--spaceL);
   letter-spacing: -0.02em;
+
+  /* The decoder swaps latin characters for katakana mid-animation. Even
+     compressed, the scrambled string runs wider than the text it resolves to,
+     so at the default size this heading tipped onto a second line and snapped
+     back. A little headroom keeps it on one line for the whole animation. */
+  @media (max-width: 696px) {
+    /* Fluid rather than a flat 20px: at 320px the column is only 288px wide and
+       the resolved string measures ~308px, so it wrapped mid-decode and snapped
+       back. 5.4vw keeps it on one line down to 320 and still reaches 20px by
+       ~370px. */
+    font-size: clamp(1.05rem, 5.4vw, calc((20 / 16) * 1rem));
+  }
   opacity: 0;
   transition: opacity var(--durationXL) ease var(--durationM);
 

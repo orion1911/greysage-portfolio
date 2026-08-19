@@ -100,7 +100,7 @@ const Home = () => {
           <p>
             GREYSAGE is a Mumbai-based manufacturing house specializing in
             streetwear and urban apparel for the youth market. Founded in
-            2016 under the label Allyz Jeans, we blend contemporary trends
+            2015 under the label Allyz Jeans, we blend contemporary trends
             with timeless quality — empowering brands worldwide to deliver
             fresh, trend-forward collections.
           </p>

@@ -13,7 +13,7 @@ const ProfileText = ({ visible, titleId }) => (
       <DecoderText text="Why partner with GREYSAGE?" start={visible} delay={500} />
     </Heading>
     <Text className={styles.description} data-visible={visible} size="l" as="p">
-      If your brand targets the energetic, trend-driven youth market, GREYSAGE is your ideal manufacturing ally. Since our inception in 2016
+      If your brand targets the energetic, trend-driven youth market, GREYSAGE is your ideal manufacturing ally. Since our inception in 2015
        as Allyz Jeans, we've honed our craft to deliver apparel that drives engagement and loyalty among young customers. 
        We don't just produce clothing—we craft cultural statements.
     </Text>
@@ -42,13 +42,13 @@ export const Profile = ({ id, visible, sectionRef }) => {
             <div className={styles.column} style={{ marginBottom: 0 }}>
               <ProfileText visible={visible} titleId={titleId} />
               <Button
-                secondary
                 className={styles.button}
                 data-visible={visible}
-                href="/contact"
-                icon="send"
+                href="/connect"
+                icon="arrow-right"
+                iconHoverShift
               >
-                Send us a message
+                Get in touch
               </Button>
             </div>
           </div>

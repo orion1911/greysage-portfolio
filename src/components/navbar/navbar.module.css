@@ -4,41 +4,48 @@
     background: var(--glassBg);
     backdrop-filter: blur(18px) saturate(140%);
     -webkit-backdrop-filter: blur(18px) saturate(140%);
-    border: 1px solid var(--glassBorder);
+    /* Thin round border and a single soft shadow — nothing else. */
+    border: 1px solid color-mix(in lab, var(--text) 12%, transparent);
     border-radius: 999px;
-    box-shadow:
-      0 1px 0 color-mix(in lab, var(--text) 6%, transparent) inset,
-      0 12px 32px -16px color-mix(in lab, var(--black) 35%, transparent);
-    transition: border-color var(--durationM) ease, background var(--durationM) ease, transform var(--durationM) var(--bezierFastoutSlowin);
+    box-shadow: 0 4px 14px -6px color-mix(in lab, var(--black) 30%, transparent);
+    transition: border-color var(--durationM) ease, box-shadow var(--durationM) ease,
+      transform var(--durationM) var(--bezierFastoutSlowin);
 
     &:hover {
-      border-color: color-mix(in lab, var(--accent) 60%, var(--glassBorder));
+      border-color: color-mix(in lab, var(--accent) 55%, transparent);
+      box-shadow: 0 6px 18px -6px color-mix(in lab, var(--black) 36%, transparent);
       transform: translateY(-1px);
     }
   }
 
   .navbar {
     --headerNavFontSize: calc((16 / 16) * 1rem);
+    --navRail: 44px;
 
     display: flex;
     flex-direction: column;
     align-items: center;
     justify-content: flex-start;
-    gap: var(--spaceM);
+    gap: var(--spaceS);
     padding: 0;
-    width: var(--space2XL);
+    /* MUST stay an explicit width. navbar.jsx sets an inline `right: 18px`, and
+       with `left` also set by this rule, `width: auto` makes the header stretch
+       the full viewport — which centres the pills and puts an invisible
+       click-blocker over the whole page. */
+    width: var(--navRail);
     position: fixed;
     top: var(--spaceOuter);
-    left: var(--spaceOuter);
+    /* Right-hand rail. Deliberately no `left` — with both edges set and any
+       non-explicit width the header stretches across the viewport and becomes
+       an invisible click-blocker over the whole page. */
+    right: var(--spaceOuter);
     bottom: var(--spaceOuter);
     z-index: var(--zIndex4);
     isolation: isolate;
 
     @media (max-width: 696px) {
       --headerNavFontSize: calc((22 / 16) * 1rem);
-      left: auto;
-      top: var(--spaceOuter);
-      right: var(--spaceOuter);
+      --navRail: 40px;
     }
 
     @media (max-width: 696px),
@@ -48,16 +55,39 @@
   }
 
   .logo {
+    --logoSize: 44px;
+    --logoMark: 26px;
+
     display: flex;
     align-items: center;
     justify-content: center;
     position: relative;
-    padding: var(--spaceS);
+    box-sizing: border-box;
+    width: var(--logoSize);
+    height: var(--logoSize);
+    padding: 0;
     z-index: var(--zIndex2);
     cursor: pointer;
+    border-radius: 999px;
+    -webkit-tap-highlight-color: transparent;
+
+    &:focus,
+    &:focus-visible,
+    &:active {
+      border-radius: 999px;
+    }
+
+    /* The marks hardcode width/height 40 in their SVG attributes; override
+       here so one value controls the pill on every breakpoint. */
+    & > svg {
+      width: var(--logoMark);
+      height: var(--logoMark);
+      display: block;
+    }
 
     @media (max-width: 696px) {
-      padding: var(--spaceS);
+      --logoSize: 40px;
+      --logoMark: 24px;
     }
   }
 

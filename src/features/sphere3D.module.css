@@ -1,7 +1,11 @@
 .canvas {
+  /* The app-wide layer in root.module.css is what pins this to the viewport;
+     absolute simply fills it. */
   position: absolute;
   width: 100vw;
+  height: 100%;
   inset: 0;
+  pointer-events: none;
   opacity: 0;
   transition-property: opacity;
   transition-duration: 3s;

@@ -4,66 +4,112 @@ import config from '../config.json';
  * Everything on /connect comes from here.
  *
  * The phone/email/address also live in public/greysage.vcf, which is what a
- * phone actually saves when someone taps "Save to contacts". Keep the two in
- * sync — the vCard has to be a real served file, because generating one in
- * JavaScript doesn't reliably open the contact sheet on iOS.
+ * phone actually saves when someone taps "Contact". Keep the two in sync — the
+ * vCard has to be a real served file, because generating one in JavaScript
+ * doesn't reliably open the contact sheet on iOS.
  */
 
-export const contactDetails = {
+const asset = file => `/assets/images/${encodeURIComponent(file)}`;
+
+export const profile = {
+  name: config.name,
+  tagline: 'Clothing Manufacturer',
   proprietor: config.proprietary,
-  role: config.disciplines.join(' · '),
-  phoneDisplay: '+91 99999 99999',
-  whatsappNumber: '919999999999', // digits only, country code first, no "+"
-  whatsappMessage: 'Hi Greysage, I would like to talk about an order.',
-  email: 'hello@greysage.com',
-  instagram: 'https://instagram.com/greysage',
-  instagramHandle: '@greysage',
-  maps: 'https://maps.google.com/?q=Greysage+Clothing',
-  mapsLabel: 'View the workshop location',
-  vcard: '/greysage.vcf',
 };
 
-export const channels = [
+export const contactDetails = {
+  phoneDisplay: '+91 98677 54586',
+  whatsappNumber: '919867754586', // digits only, country code first, no "+"
+  whatsappMessage: 'Hi GREYSAGE, I would like to talk about an order.',
+  email: 'greysageclothing@greysage.com',
+  instagram: 'https://instagram.com/greysage_clothing',
+  instagramHandle: '@greysage_clothing',
+  maps: 'https://maps.google.com/?q=Greysage+Clothing',
+  mapsLabel: 'Andheri East, Mumbai',
+  vcard: '/greysage.vcf',
+  banner: asset('vogue.jpg'),
+};
+
+export const whatsappUrl = `https://wa.me/${
+  contactDetails.whatsappNumber
+}?text=${encodeURIComponent(contactDetails.whatsappMessage)}`;
+
+/** The two glyphs directly under the tagline. */
+export const socials = [
+  { id: 'home', icon: 'home', label: 'Back to home', href: '/', internal: true },
+  { id: 'whatsapp', icon: 'whatsapp', label: 'WhatsApp', href: whatsappUrl },
+  { id: 'instagram', icon: 'instagram', label: 'Instagram', href: contactDetails.instagram },
   {
-    id: 'whatsapp',
-    icon: 'whatsapp',
-    label: 'WhatsApp',
-    value: contactDetails.phoneDisplay,
-    href: `https://wa.me/${contactDetails.whatsappNumber}?text=${encodeURIComponent(
-      contactDetails.whatsappMessage
-    )}`,
-    external: true,
+    id: 'contact',
+    icon: 'mail',
+    label: 'Send us a message',
+    href: '/contact',
+    internal: true,
+  },
+];
+
+/**
+ * The stacked cards, in display order. `kind` picks the renderer:
+ *   'vcard'    — downloads the contact card
+ *   'featured' — full-bleed banner card
+ *   'link'     — standard row
+ */
+export const cards = [
+  {
+    id: 'contact',
+    kind: 'vcard',
+    icon: 'save-contact',
+    label: 'Contact',
+    caption: 'Save to your phone',
   },
   {
-    id: 'phone',
-    icon: 'phone',
-    label: 'Call',
-    value: contactDetails.phoneDisplay,
-    href: `tel:${contactDetails.phoneDisplay.replace(/\s/g, '')}`,
+    id: 'about',
+    kind: 'featured',
+    label: `About ${config.name}`,
+    href: '/',
+    internal: true,
+  },
+  {
+    id: 'whatsapp',
+    kind: 'link',
+    icon: 'whatsapp',
+    label: 'WhatsApp',
+    caption: contactDetails.phoneDisplay,
+    href: whatsappUrl,
     copy: contactDetails.phoneDisplay,
   },
   {
+    id: 'instagram',
+    kind: 'link',
+    icon: 'instagram',
+    label: 'Instagram',
+    caption: contactDetails.instagramHandle,
+    href: contactDetails.instagram,
+  },
+  {
     id: 'email',
+    kind: 'link',
     icon: 'mail',
     label: 'Email',
-    value: contactDetails.email,
+    caption: contactDetails.email,
     href: `mailto:${contactDetails.email}`,
     copy: contactDetails.email,
   },
   {
-    id: 'instagram',
-    icon: 'instagram',
-    label: 'Instagram',
-    value: contactDetails.instagramHandle,
-    href: contactDetails.instagram,
-    external: true,
+    id: 'message',
+    kind: 'link',
+    icon: 'send',
+    label: 'Send us a message',
+    caption: 'Write to us right here',
+    href: '/contact',
+    internal: true,
   },
   {
     id: 'maps',
+    kind: 'link',
     icon: 'map-pin',
-    label: 'Location',
-    value: contactDetails.mapsLabel,
+    label: 'Find us on Maps',
+    caption: contactDetails.mapsLabel,
     href: contactDetails.maps,
-    external: true,
   },
 ];

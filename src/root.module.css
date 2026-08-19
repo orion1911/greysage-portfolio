@@ -41,3 +41,53 @@
     }
   }
 }
+
+/* Unlayered: these must beat @layer rules regardless of layer order. */
+
+/* Single app-wide sphere layer. z-index -1 rather than 0 because most sections
+   are not positioned — a positioned sphere would paint on top of them. */
+.sphere {
+  position: fixed;
+  inset: 0;
+  z-index: -1;
+  pointer-events: none;
+  transition: opacity var(--durationL) ease;
+}
+
+/* Held back on the inner pages, where it sits behind dense text, and faded out
+   low so the footer copyright keeps its contrast. */
+.sphere[data-dim='true'] {
+  opacity: 0.4;
+  -webkit-mask-image: linear-gradient(to bottom, #000 0%, #000 55%, transparent 92%);
+  mask-image: linear-gradient(to bottom, #000 0%, #000 55%, transparent 92%);
+}
+
+/* Home's body copy runs edge to edge under the sphere, so once the hero is gone
+   it needs to sit back further than the inner pages do. */
+.sphere[data-past-hero='true'] {
+  opacity: 0.22;
+}
+
+@media (max-width: 696px) {
+  .sphere[data-dim='true'] {
+    opacity: 0.28;
+  }
+
+  .sphere[data-past-hero='true'] {
+    opacity: 0.16;
+  }
+}
+
+/* Gentle cross-page fade so routes don't snap in. */
+.container {
+  animation: routeFade var(--durationM) var(--bezierFastoutSlowin) both;
+}
+
+@keyframes routeFade {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
