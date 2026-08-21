@@ -41,7 +41,7 @@ export const socials = [
   { id: 'instagram', icon: 'instagram', label: 'Instagram', href: contactDetails.instagram },
   {
     id: 'contact',
-    icon: 'mail',
+    icon: 'send',
     label: 'Send us a message',
     href: '/contact',
     internal: true,

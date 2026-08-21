@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from 'react';
 import { Link as RouterLink } from 'react-router-dom';
-import { QRCodeCanvas, QRCodeSVG } from 'qrcode.react';
+import QRCodeStyling from 'qr-code-styling';
 import { Button } from '../components/button';
 import { DecoderText } from '../components/decoder-text';
 import { Footer } from '../components/footer';
@@ -13,12 +13,10 @@ import { tokens } from '../components/theme-provider/theme';
 import { Transition } from '../components/transition';
 import { cssProps, msToNum, numToMs } from '../components/utils/style';
 import { cards, contactDetails, profile, socials } from './connect-data';
+import { qrOptions } from './qr-logo';
 import styles from './connect.module.css';
 
-// A QR is only reliably scannable as dark-on-light, so it keeps these colours
-// in both themes rather than following --text / --background.
-const QR_DARK = '#101010';
-const QR_LIGHT = '#ffffff';
+const QR_DISPLAY_SIZE = 168;
 const QR_DOWNLOAD_SIZE = 1024;
 
 export const Connect = () => {
@@ -26,12 +24,30 @@ export const Connect = () => {
   const [copied, setCopied] = useState(null);
   const [pageUrl, setPageUrl] = useState('');
   const copyTimer = useRef();
-  const qrCanvasRef = useRef();
+  const qrRef = useRef();
+  const qrInstance = useRef();
 
   useEffect(() => {
     setPageUrl(window.location.href);
     return () => clearTimeout(copyTimer.current);
   }, []);
+
+  // qr-code-styling renders into a node imperatively rather than as a
+  // component, so mount it once pageUrl exists and tear down on change.
+  useEffect(() => {
+    if (!pageUrl || !qrRef.current) return;
+    // `type: 'svg'` keeps the on-screen code vector-crisp, like QRCodeSVG did.
+    qrInstance.current = new QRCodeStyling({
+      ...qrOptions(pageUrl, QR_DISPLAY_SIZE),
+      type: 'svg',
+    });
+    qrInstance.current.append(qrRef.current);
+    const node = qrRef.current;
+    return () => {
+      node.replaceChildren();
+      qrInstance.current = null;
+    };
+  }, [pageUrl]);
 
   const flash = message => {
     setCopied(message);
@@ -102,15 +118,22 @@ export const Connect = () => {
     flash('Opening contact card');
   };
 
-  /** PNG comes off the hidden high-res canvas, not the SVG shown on screen. */
-  const handleDownloadPng = () => {
-    const canvas = qrCanvasRef.current;
-    if (!canvas) return;
-    canvas.toBlob(blob => {
-      if (!blob) return flash('Could not build the PNG');
+  /**
+   * Export renders a throwaway hi-res instance; the on-screen SVG stays 168px.
+   * getRawData + saveBlob (rather than .download()) keeps the Safari-safe
+   * object-URL flow we already use for the vCard.
+   */
+  const handleDownloadPng = async () => {
+    if (!pageUrl) return;
+    try {
+      const hiRes = new QRCodeStyling(qrOptions(pageUrl, QR_DOWNLOAD_SIZE));
+      const blob = await hiRes.getRawData('png');
+      if (!blob) throw new Error('empty');
       saveBlob(blob, 'greysage-connect-qr.png');
       flash('QR downloaded');
-    }, 'image/png');
+    } catch (error) {
+      flash('Could not build the PNG');
+    }
   };
 
   const getDelay = (delayMs, offset = numToMs(0), multiplier = 1) => {
@@ -249,6 +272,7 @@ export const Connect = () => {
                       key={id}
                       to={href}
                       className={styles.social}
+                      data-icon={icon}
                       aria-label={label}
                       title={label}
                     >
@@ -261,6 +285,7 @@ export const Connect = () => {
                       href={href}
                       target="_blank"
                       rel="noopener noreferrer"
+                      data-icon={icon}
                       aria-label={label}
                       title={label}
                     >
@@ -281,16 +306,7 @@ export const Connect = () => {
               style={getDelay(tokens.base.durationM, initDelay, cards.length * 0.3 + 1)}
             >
               <div className={styles.qrTile}>
-                {pageUrl && (
-                  <QRCodeSVG
-                    value={pageUrl}
-                    size={168}
-                    level="M"
-                    marginSize={2}
-                    fgColor={QR_DARK}
-                    bgColor={QR_LIGHT}
-                  />
-                )}
+                <div ref={qrRef} className={styles.qrMount} />
               </div>
               <div className={styles.qrBody}>
                 <span className={styles.qrLabel}>Save or share this code</span>
@@ -300,7 +316,7 @@ export const Connect = () => {
                 <div className={styles.qrActions}>
                   <Button
                     className={styles.qrButton}
-                    icon="save-contact"
+                    icon="download"
                     onClick={handleDownloadPng}
                   >
                     Download PNG
@@ -311,22 +327,6 @@ export const Connect = () => {
                 </div>
               </div>
             </div>
-
-
-            {/* Off-screen, high resolution, purely the source for the PNG. */}
-            {pageUrl && (
-              <div className={styles.qrHidden} aria-hidden>
-                <QRCodeCanvas
-                  ref={qrCanvasRef}
-                  value={pageUrl}
-                  size={QR_DOWNLOAD_SIZE}
-                  level="M"
-                  marginSize={2}
-                  fgColor={QR_DARK}
-                  bgColor={QR_LIGHT}
-                />
-              </div>
-            )}
           </div>
         )}
       </Transition>

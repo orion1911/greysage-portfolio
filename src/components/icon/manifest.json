@@ -86,5 +86,9 @@
   "home": {
     "width": 24,
     "height": 24
+  },
+  "download": {
+    "width": 24,
+    "height": 24
   }
 }

@@ -151,6 +151,13 @@
     transform var(--durationM) var(--bezierFastoutSlowin);
 }
 
+/* The send glyph's mass sits left of centre (right-pointing wedge), so it
+   reads shifted left inside the circle. Nudge the ink, not the layout —
+   margin would move the centred box and fight place-items. */
+.social[data-icon='send'] svg {
+  transform: translateX(2px);
+}
+
 .social:hover {
   color: var(--accent);
   border-color: color-mix(in lab, var(--accent) 60%, var(--border));
@@ -427,15 +434,11 @@
   justify-content: center;
 }
 
-/* Rendered only as the source for the PNG download. Kept in the layout tree —
-   display:none would stop the canvas painting in some browsers. */
-.qrHidden {
-  position: absolute;
-  width: 1px;
-  height: 1px;
-  overflow: hidden;
-  clip-path: inset(50%);
-  pointer-events: none;
+/* qr-code-styling appends its own svg here; kill line-height gap under it. */
+.qrMount {
+  line-height: 0;
+  display: grid;
+  place-items: center;
 }
 
 /* ── Toast ─────────────────────────────────────────────────── */
