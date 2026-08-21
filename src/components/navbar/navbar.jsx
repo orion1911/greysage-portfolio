@@ -24,6 +24,14 @@ export const Navbar = () => {
   const windowSize = useWindowSize();
   const headerRef = useRef();
   const isMobile = windowSize.width <= media.mobile || windowSize.height <= 696;
+  // /connect is a standalone card page: its links live on the page itself, and
+  // the nav's section links are hash anchors into the homepage. Keep only the
+  // home pill as the way back.
+  const isConnectPage = location.pathname === '/connect';
+  // The contact page has its own send flow; the connect pill there is a detour
+  // away from the form. Hide the pill but keep the section nav as the way back.
+  // (/connect renders no navbar at all — see the early return below.)
+  const hideConnectPill = location.pathname === '/contact';
   const scrollToHash = useScrollToHash();
 
   useEffect(() => {
@@ -141,6 +149,11 @@ export const Navbar = () => {
     if (menuOpen) setMenuOpen(false);
   };
 
+  // /connect carries its own way home twice over (the avatar mark and the
+  // "Back to home" social), so the navbar there is pure repetition. All hooks
+  // above still run unconditionally, keeping React's rules intact.
+  if (isConnectPage) return null;
+
   return (
     <header className={styles.navbar} ref={headerRef}>
       <RouterLink
@@ -154,17 +167,19 @@ export const Navbar = () => {
       >
         <Monogram highlight />
       </RouterLink>
-      <RouterLink
-        unstable_viewTransition
-        prefetch="intent"
-        to='/connect'
-        data-navbar-item
-        className={styles.logo + ' ' + styles.glassEffect}
-        aria-label={`Connect with ${config.name}`}
-        onClick={handleMobileNavClick}
-      >
-        <MonogramContact highlight />
-      </RouterLink>
+      {!hideConnectPill && (
+        <RouterLink
+          unstable_viewTransition
+          prefetch="intent"
+          to='/connect'
+          data-navbar-item
+          className={styles.logo + ' ' + styles.glassEffect}
+          aria-label={`Connect with ${config.name}`}
+          onClick={handleMobileNavClick}
+        >
+          <MonogramContact highlight />
+        </RouterLink>
+      )}
       {/* <NavToggle onClick={() => setMenuOpen(!menuOpen)} menuOpen={menuOpen} /> */}
       <nav className={styles.nav}>
         <div className={styles.navList}>

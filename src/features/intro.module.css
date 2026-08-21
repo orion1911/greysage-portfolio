@@ -420,6 +420,11 @@ body {
 
   &[data-hidden='true'] {
     opacity: 0;
+    /* Invisible must also mean untouchable — the fixed anchor otherwise keeps
+       its hover cursor and href preview at the old spot. Keyboard focus still
+       works (pointer-events doesn't block it), so :focus-visible below can
+       bring it back for tab users. */
+    pointer-events: none;
 
     @media (prefers-reduced-motion: no-preference) {
       transform: translate3d(0, 20px, 0);
@@ -473,6 +478,7 @@ body {
   &[data-hidden='true'] {
     opacity: 0;
     transform: none;
+    pointer-events: none;
   }
 
   @media (pointer: fine) {
